@@ -7,10 +7,11 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  base: "/thing-in-rings-with-ai/",
   build: {
     target: "esnext",
   },
   optimizeDeps: {
-    include: ["solid-markdown > micromark", "solid-markdown > unified"],
+    include: ["solid-markdown > micromark", "solid-markdown > unified"], // https://github.com/andi23rosca/solid-markdown/issues/33
   },
 });
