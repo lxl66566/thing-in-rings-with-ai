@@ -5,13 +5,22 @@ import { MainList } from "./MainList";
 import { getGameState, resetGame, startGame } from "../store/gameStore";
 import { GenerateGameAttributes } from "../llm";
 import { SolidMarkdown } from "solid-markdown";
+import { getConfig, isConfigValid } from "../config";
 
-export const Game: Component = () => {
+interface GameProps {
+  openConfigModal: () => void;
+}
+
+export const Game: Component<GameProps> = (props) => {
   const gameState = getGameState();
   const { t } = useLanguage();
   const [isStarting, setIsStarting] = createSignal(false);
 
   const handleStartGame = async () => {
+    if (!isConfigValid(getConfig())) {
+      props.openConfigModal();
+      return;
+    }
     resetGame();
     setIsStarting(true);
     const attr = await GenerateGameAttributes();
@@ -37,14 +46,14 @@ export const Game: Component = () => {
           >
             <Show when={isStarting()} fallback={t("startGame")}>
               <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>{t("loading")}</span>
+              <span>{t("llmGenerating")}</span>
             </Show>
           </button>
         </div>
       </Show>
 
       <Show when={gameState.isStarted}>
-        <div class="flex align-center justify-center items-center mb-8">
+        <div class="flex flex-col align-center justify-center items-center mb-8">
           <div class="flex items-center justify-center gap-2">
             <button
               disabled={isStarting()}
@@ -53,12 +62,14 @@ export const Game: Component = () => {
             >
               <Show when={isStarting()} fallback={t("restartGame")}>
                 <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{t("loading")}</span>
+                <span>{t("llmGenerating")}</span>
               </Show>
             </button>
           </div>
+          <div class="flex-1">
+            <MainList />
+          </div>
         </div>
-        <MainList />
       </Show>
     </div>
   );

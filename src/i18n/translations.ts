@@ -30,6 +30,7 @@ export const translations = {
     noAttributesSelected: "No attributes selected",
     noNameSelected: "No name selected",
     loading: "Loading...",
+    llmGenerating: "Generating...",
     startGameDescription: `_Thing in Rings_ is a game for multiple players and one God. 
 
 The core mechanic revolves around a three-zone Venn diagram. At the start, the God randomly selects attributes for each zone of the Venn diagram, these attributes remain hidden from players: 
@@ -73,6 +74,7 @@ The winning condition is being the first to play all cards from one's hand.`,
     noAttributesSelected: "没有选择属性",
     noNameSelected: "没有指定名称",
     loading: "加载中...",
+    llmGenerating: "生成中...",
     startGameDescription: `_Thing in Rings_ 是一款多人加一位"上帝"参与的桌游。
 
 游戏核心机制围绕三连通 venn 图展开。开局时，"上帝"会为 venn 图的每个区域随机选定属性，这些属性对玩家保密：

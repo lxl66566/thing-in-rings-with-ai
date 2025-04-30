@@ -104,7 +104,7 @@ const MainList: Component = () => {
         </div>
 
         {/* Description 输入框 */}
-        <div>
+        <div class="flex-1">
           <input
             id="description"
             type="text"
