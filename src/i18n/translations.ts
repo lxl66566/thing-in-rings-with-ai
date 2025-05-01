@@ -4,8 +4,12 @@ export const translations = {
   en: {
     save: "Save",
     reset: "Reset",
+    expand: "Expand",
+    expandExplanation: "expand explanation",
     startGame: "Start Game",
     restartGame: "Restart Game",
+    yesRestartGame: "Yes, restart the game",
+    notRestartGame: "No, do not restart game",
     gameStarted: "Game started! ",
     create: "Create",
     word: "Word",
@@ -27,10 +31,13 @@ export const translations = {
     configureLLMFirst: "Please configure LLM settings first",
     noItemsAdded: "No items added yet",
     ItemsList: "Items List",
+    showGeneratedAttributes: "Show LLM generated attributes",
+    generatedAttributes: "LLM generated attributes",
     noAttributesSelected: "No attributes selected",
     noNameSelected: "No name selected",
     loading: "Loading...",
     llmGenerating: "Generating...",
+    noExplanation: "No explanation returned by the model",
     startGameDescription: `_Thing in Rings_ is a game for multiple players and one God. 
 
 The core mechanic revolves around a three-zone Venn diagram. At the start, the God randomly selects attributes for each zone of the Venn diagram, these attributes remain hidden from players: 
@@ -48,8 +55,12 @@ The winning condition is being the first to play all cards from one's hand.`,
   zh: {
     save: "保存",
     reset: "重置",
+    expand: "展开",
+    expandExplanation: "展开解释",
     startGame: "开始游戏",
     restartGame: "重新开始",
+    yesRestartGame: "是的，重新开始",
+    notRestartGame: "点错了",
     gameStarted: "游戏开始！",
     create: "创建",
     word: "单词",
@@ -75,6 +86,9 @@ The winning condition is being the first to play all cards from one's hand.`,
     noNameSelected: "没有指定名称",
     loading: "加载中...",
     llmGenerating: "生成中...",
+    noExplanation: "模型没有返回解释",
+    showGeneratedAttributes: "显示模型生成的预设属性",
+    generatedAttributes: "模型生成的预设属性",
     startGameDescription: `_Thing in Rings_ 是一款多人加一位"上帝"参与的桌游。
 
 游戏核心机制围绕三连通 venn 图展开。开局时，"上帝"会为 venn 图的每个区域随机选定属性，这些属性对玩家保密：

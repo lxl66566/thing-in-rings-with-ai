@@ -12,6 +12,7 @@ type TableItem = {
   description: string;
   userInput: VennArea; // 用户输入时的VennArea值
   actualResult: VennArea; // 异步函数返回的实际VennArea值
+  explanation: string;
 };
 
 const MainList: Component = () => {
@@ -25,14 +26,41 @@ const MainList: Component = () => {
   const [items, setItems] = createSignal<TableItem[]>([]); // 存储表格数据的数组信号
   const [isLoading, setIsLoading] = createSignal(false); // 用于表示加载状态
 
-  // 处理“创建”按钮点击事件的异步函数
+  // fake data
+  // const l = [];
+  // for (let i = 0; i < 20; i++) {
+  //   l.push({
+  //     id: i,
+  //     name: " 123",
+  //     description: " 456",
+  //     userInput: {
+  //       word: false,
+  //       attribute: false,
+  //       context: false,
+  //     },
+  //     actualResult: {
+  //       word: false,
+  //       attribute: false,
+  //       context: false,
+  //     },
+  //     explanation: "123",
+  //   });
+  // }
+  // setItems(l);
+
+  const resetUserInput = () => {
+    // 可选：创建成功后清空输入框
+    setName("");
+    setDescription("");
+    setWord(false);
+    setAttribute(false);
+    setContext(false);
+  };
+
+  // 处理"创建"按钮点击事件的异步函数
   const handleCreate = async () => {
     if (!name()) {
       toast.error(t("noNameSelected"));
-      return;
-    }
-    if (!word() && !attribute() && !context()) {
-      toast.error(t("noAttributesSelected"));
       return;
     }
     setIsLoading(true); // 开始加载
@@ -48,12 +76,14 @@ const MainList: Component = () => {
       word: name(),
       description: description(),
     };
+    console.log(`UserInputItem: ${userInputItem}, UserInputArea: ${userInputArea}`);
 
     try {
       // 调用模拟的异步创建函数
       const judgementResult = await judgeItemPlacement(userInputItem, userInputArea);
       const actualResult = judgementResult?.isCorrect ? userInputArea : judgementResult?.correctJudgement;
-      console.log(actualResult);
+      console.log(actualResult, judgementResult?.explanation);
+
       if (!actualResult) {
         toast.error("Incorrect judgement");
         return;
@@ -66,22 +96,16 @@ const MainList: Component = () => {
         description: description(),
         userInput: userInputArea, // 存储用户输入时的值
         actualResult: actualResult, // 存储实际返回的值
+        explanation: judgementResult?.explanation || t("noExplanation"),
       };
-
       // 更新表格数据状态
       setItems((prev) => [...prev, newItem]);
-
-      // 可选：创建成功后清空输入框
-      setName("");
-      setDescription("");
-      setWord(false);
-      setAttribute(false);
-      setContext(false);
     } catch (error) {
       console.error("Error creating item:", error);
       // 处理错误，例如显示错误消息给用户
     } finally {
       setIsLoading(false); // 结束加载
+      resetUserInput();
     }
   };
 
@@ -90,7 +114,7 @@ const MainList: Component = () => {
       {/* <h1 class="text-2xl font-bold mb-6 text-gray-800">Venn Area Creator</h1> */}
 
       {/* 输入行 */}
-      <div class="flex flex-col sm:flex-row items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-white rounded-lg shadow-md">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-white rounded-lg shadow-md sticky top-15 z-10">
         {/* Name 输入框 */}
         <div>
           <input
@@ -111,7 +135,7 @@ const MainList: Component = () => {
             value={description()}
             onInput={(e) => setDescription(e.currentTarget.value)}
             placeholder={t("description")}
-            class="p-2 border border-gray-300 rounded-md sm:flex-1 w-full sm:w-36 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="p-2 border border-gray-300 rounded-md sm:flex-1 w-full sm:w-40 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
@@ -125,7 +149,7 @@ const MainList: Component = () => {
               onChange={(e) => setWord(e.currentTarget.checked)}
               class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span class="ml-2 text-sm">Word</span>
+            <span class="ml-2 text-sm text-yellow-500">Word</span>
           </label>
 
           {/* Attribute Checkbox */}
@@ -136,7 +160,7 @@ const MainList: Component = () => {
               onChange={(e) => setAttribute(e.currentTarget.checked)}
               class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span class="ml-2 text-sm">Attribute</span>
+            <span class="ml-2 text-sm text-red-500">Attribute</span>
           </label>
 
           {/* Context Checkbox */}
@@ -147,7 +171,7 @@ const MainList: Component = () => {
               onChange={(e) => setContext(e.currentTarget.checked)}
               class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span class="ml-2 text-sm">Context</span>
+            <span class="ml-2 text-sm text-blue-500">Context</span>
           </label>
         </div>
 
@@ -157,83 +181,91 @@ const MainList: Component = () => {
           disabled={isLoading()} // 加载时禁用按钮
           class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading() ? "Creating..." : "Create"}
+          {isLoading() ? t("llmGenerating") : t("create")}
         </button>
       </div>
 
       {/* 表格区域 */}
       <h2 class="text-xl font-bold mb-4 text-gray-800">{t("ItemsList")}</h2>
-      {items().length === 0 ? (
-        <p class="text-gray-600">{t("noItemsAdded")}</p>
-      ) : (
-        <div class="overflow-x-auto bg-white rounded-lg shadow-md">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Word (Actual Value)
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Attribute (Actual Value)
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Context (Actual Value)
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {/* 使用 SolidJS 的 For 指令渲染列表 */}
-              <For each={items()}>
-                {(item) => (
-                  <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{item.description}</td>
 
-                    {/* Word 列，根据用户输入与实际值对比标红或标绿 */}
-                    <td
-                      class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                      classList={{
-                        "bg-red-100 text-red-800": item.userInput.word !== item.actualResult.word,
-                        "bg-green-100 text-green-800": item.userInput.word === item.actualResult.word,
-                      }}
-                    >
-                      {item.actualResult.word.toString()} {/* 显示实际值 */}
-                    </td>
+      <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+        <table class="min-w-full max-w-full divide-y divide-gray-200 table-fixed">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+                Name
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+                Description
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow-500 uppercase tracking-wider w-[10%]">
+                Word
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-red-500 uppercase tracking-wider w-[10%]">
+                Attribute
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider w-[10%]">
+                Context
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[40%]">
+                Explanation
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {/* 使用 SolidJS 的 For 指令渲染列表 */}
+            <For each={items()}>
+              {(item) => (
+                <tr>
+                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.name}</td>
+                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.description}</td>
 
-                    {/* Attribute 列 */}
-                    <td
-                      class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                      classList={{
-                        "bg-red-100 text-red-800": item.userInput.attribute !== item.actualResult.attribute,
-                        "bg-green-100 text-green-800": item.userInput.attribute === item.actualResult.attribute,
-                      }}
-                    >
-                      {item.actualResult.attribute.toString()} {/* 显示实际值 */}
-                    </td>
+                  {/* Word 列，根据用户输入与实际值对比标红或标绿 */}
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    classList={{
+                      "bg-red-100 text-red-800": item.userInput.word !== item.actualResult.word,
+                      "bg-green-100 text-green-800": item.userInput.word === item.actualResult.word,
+                    }}
+                  >
+                    {item.actualResult.word.toString()} {/* 显示实际值 */}
+                  </td>
 
-                    {/* Context 列 */}
-                    <td
-                      class="px-6 py-4 whitespace-nowrap text-sm font-medium"
-                      classList={{
-                        "bg-red-100 text-red-800": item.userInput.context !== item.actualResult.context,
-                        "bg-green-100 text-green-800": item.userInput.context === item.actualResult.context,
-                      }}
-                    >
-                      {item.actualResult.context.toString()} {/* 显示实际值 */}
-                    </td>
-                  </tr>
-                )}
-              </For>
-            </tbody>
-          </table>
-        </div>
-      )}
+                  {/* Attribute 列 */}
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    classList={{
+                      "bg-red-100 text-red-800": item.userInput.attribute !== item.actualResult.attribute,
+                      "bg-green-100 text-green-800": item.userInput.attribute === item.actualResult.attribute,
+                    }}
+                  >
+                    {item.actualResult.attribute.toString()} {/* 显示实际值 */}
+                  </td>
+
+                  {/* Context 列 */}
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    classList={{
+                      "bg-red-100 text-red-800": item.userInput.context !== item.actualResult.context,
+                      "bg-green-100 text-green-800": item.userInput.context === item.actualResult.context,
+                    }}
+                  >
+                    {item.actualResult.context.toString()} {/* 显示实际值 */}
+                  </td>
+
+                  {/* Explanation 列 */}
+                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">
+                    <details>
+                      <summary>{t("expandExplanation")}</summary>
+                      {item.explanation}
+                    </details>
+                  </td>
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
