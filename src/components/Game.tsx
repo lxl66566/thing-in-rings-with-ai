@@ -75,11 +75,17 @@ export const Game: Component<GameProps> = (props) => {
         </div>
       </Show>
       <Modal isOpen={showGeneratedAttributes()} onClose={() => setShowGeneratedAttributes(false)} title={t("generatedAttributes")}>
-        <SolidMarkdown
-          children={`- **Attribute**: ${gameState.attributes?.attribute}
-- **Context**: ${gameState.attributes?.context}
-- **Word**: ${gameState.attributes?.word}`}
-        />
+        <ul>
+          <li class="text-red-500">
+            <strong>Attribute</strong>: {gameState.attributes?.attribute}
+          </li>
+          <li class="text-blue-500">
+            <strong>Context</strong>: {gameState.attributes?.context}
+          </li>
+          <li class="text-yellow-500">
+            <strong>Word</strong>: {gameState.attributes?.word}
+          </li>
+        </ul>
       </Modal>
     </div>
   );

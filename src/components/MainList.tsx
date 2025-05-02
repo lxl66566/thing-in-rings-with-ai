@@ -3,6 +3,7 @@ import { TableItem, VennArea } from "../types/game";
 import { judgeItemPlacement } from "../llm";
 import { toast } from "solid-toast";
 import { useLanguage } from "../i18n/LanguageContext";
+import { ColorPicker } from "./common/ColorPicker";
 
 const toEmoji = (value: boolean) => {
   return value ? "✅" : "❌";
@@ -61,9 +62,8 @@ const MainList: Component<MainListProps> = (props) => {
       toast.error(t("noNameSelected"));
       return;
     }
-    setIsLoading(true); // 开始加载
+    setIsLoading(true);
 
-    // 获取当前用户输入值
     const userInputArea: VennArea = {
       word: word(),
       attribute: attribute(),
@@ -74,37 +74,37 @@ const MainList: Component<MainListProps> = (props) => {
       word: name(),
       description: description(),
     };
-    console.log(`UserInputItem: ${userInputItem}, UserInputArea: ${userInputArea}`);
 
     try {
-      // 调用模拟的异步创建函数
       const judgementResult = await judgeItemPlacement(language, userInputItem, userInputArea);
       const actualResult = judgementResult?.isCorrect ? userInputArea : judgementResult?.correctJudgement;
-      console.log(actualResult, judgementResult?.explanation);
 
       if (!actualResult) {
         toast.error("Incorrect judgement");
         return;
       }
 
-      // 创建新的表格条目对象
       const newItem: TableItem = {
-        id: Date.now(), // 使用时间戳作为唯一ID
+        id: Date.now(),
         name: name(),
         description: description(),
-        userInput: userInputArea, // 存储用户输入时的值
-        actualResult: actualResult, // 存储实际返回的值
+        color: "#FFFFFF", // 默认颜色
+        userInput: userInputArea,
+        actualResult: actualResult,
         explanation: judgementResult?.explanation || t("noExplanation"),
       };
-      // 更新表格数据状态
       props.setItems((prev) => [...prev, newItem]);
     } catch (error) {
       console.error("Error creating item:", error);
       toast.error(error instanceof Error ? error.message : "Unknown error");
     } finally {
-      setIsLoading(false); // 结束加载
+      setIsLoading(false);
       resetUserInput();
     }
+  };
+
+  const updateItemColor = (itemId: number, newColor: string) => {
+    props.setItems((prev) => prev.map((item) => (item.id === itemId ? { ...item, color: newColor } : item)));
   };
 
   return (
@@ -218,7 +218,10 @@ const MainList: Component<MainListProps> = (props) => {
             <For each={props.items()}>
               {(item) => (
                 <tr>
-                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.name}</td>
+                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800 flex items-center justify-center gap-0.5">
+                    <span class="flex-shrink-0 transform -translate-y-1/12 pr-2">{item.name}</span>
+                    <ColorPicker selectedColor={item.color || "#FFFFFF"} onColorSelect={(color) => updateItemColor(item.id, color)} />
+                  </td>
                   <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.description}</td>
 
                   {/* Word 列，根据用户输入与实际值对比标红或标绿 */}

@@ -39,6 +39,7 @@ export type TableItem = {
   id: number; // 用于列表渲染的唯一key
   name: string;
   description: string;
+  color?: string; // 条目的颜色
   userInput: VennArea; // 用户输入时的VennArea值
   actualResult: VennArea; // 异步函数返回的实际VennArea值
   explanation: string;
