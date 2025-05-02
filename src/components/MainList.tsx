@@ -15,6 +15,10 @@ type TableItem = {
   explanation: string;
 };
 
+const toEmoji = (value: boolean) => {
+  return value ? "✅" : "❌";
+};
+
 const MainList: Component = () => {
   const { t } = useLanguage();
   const [name, setName] = createSignal("");
@@ -114,9 +118,9 @@ const MainList: Component = () => {
       {/* <h1 class="text-2xl font-bold mb-6 text-gray-800">Venn Area Creator</h1> */}
 
       {/* 输入行 */}
-      <div class="flex flex-col sm:flex-row items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-white rounded-lg shadow-md sticky top-15 z-10">
+      <div class="flex flex-col sm:w-auto sm:flex-row items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-white rounded-lg shadow-md sticky top-15 z-10">
         {/* Name 输入框 */}
-        <div>
+        <div class="w-[calc(100%-2rem)] sm:w-auto">
           <input
             id="name"
             type="text"
@@ -128,19 +132,19 @@ const MainList: Component = () => {
         </div>
 
         {/* Description 输入框 */}
-        <div class="flex-1">
+        <div class="w-[calc(100%-2rem)] sm:w-auto sm:flex-1">
           <input
             id="description"
             type="text"
             value={description()}
             onInput={(e) => setDescription(e.currentTarget.value)}
             placeholder={t("description")}
-            class="p-2 border border-gray-300 rounded-md sm:flex-1 w-full sm:w-40 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         {/* Checkboxes 容器 */}
-        <div class="flex items-center space-x-4 pt-2 sm:pt-0">
+        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 pt-2 sm:pt-0">
           {/* Word Checkbox */}
           <label class="flex items-center cursor-pointer text-gray-700">
             <input
@@ -178,17 +182,20 @@ const MainList: Component = () => {
         {/* 创建按钮 */}
         <button
           onClick={handleCreate}
-          disabled={isLoading()} // 加载时禁用按钮
-          class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isLoading()}
+          class="w-[calc(100%-2rem)] sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading() ? t("llmGenerating") : t("create")}
         </button>
       </div>
 
       {/* 表格区域 */}
-      <h2 class="text-xl font-bold mb-4 text-gray-800">{t("ItemsList")}</h2>
+      <div class="flex items-center gap-2 mb-4">
+        <h2 class="text-xl font-bold text-gray-800">{t("ItemsList")}</h2>
+        <span class="text-sm text-gray-600">{t("ItemsListDescription")}</span>
+      </div>
 
-      <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+      <div class="overflow-x-auto w-full bg-white rounded-lg shadow-md">
         <table class="min-w-full max-w-full divide-y divide-gray-200 table-fixed">
           <thead class="bg-gray-50">
             <tr>
@@ -228,7 +235,7 @@ const MainList: Component = () => {
                       "bg-green-100 text-green-800": item.userInput.word === item.actualResult.word,
                     }}
                   >
-                    {item.actualResult.word.toString()} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.word)} {/* 显示实际值 */}
                   </td>
 
                   {/* Attribute 列 */}
@@ -239,7 +246,7 @@ const MainList: Component = () => {
                       "bg-green-100 text-green-800": item.userInput.attribute === item.actualResult.attribute,
                     }}
                   >
-                    {item.actualResult.attribute.toString()} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.attribute)} {/* 显示实际值 */}
                   </td>
 
                   {/* Context 列 */}
@@ -250,7 +257,7 @@ const MainList: Component = () => {
                       "bg-green-100 text-green-800": item.userInput.context === item.actualResult.context,
                     }}
                   >
-                    {item.actualResult.context.toString()} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.context)} {/* 显示实际值 */}
                   </td>
 
                   {/* Explanation 列 */}

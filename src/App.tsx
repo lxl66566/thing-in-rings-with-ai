@@ -1,7 +1,7 @@
 import { Component, createSignal } from "solid-js";
 import { useLanguage } from "./i18n/LanguageContext";
 import { ConfigPanel } from "./components/ConfigPanel";
-import { Modal } from "./components/Modal";
+import { Modal } from "./components/common/Modal";
 import { Game } from "./components/Game";
 import toast from "solid-toast";
 // import { FiSettings } from "solid-icons/fi";
