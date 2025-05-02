@@ -15,7 +15,7 @@ interface GameProps {
 
 export const Game: Component<GameProps> = (props) => {
   const gameState = getGameState();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isStarting, setIsStarting] = createSignal(false);
   const [showGeneratedAttributes, setShowGeneratedAttributes] = createSignal(false);
 
@@ -26,7 +26,7 @@ export const Game: Component<GameProps> = (props) => {
     }
     resetGame();
     setIsStarting(true);
-    const attr = await GenerateGameAttributes();
+    const attr = await GenerateGameAttributes(language);
     startGame(attr);
     setIsStarting(false);
     toast.success(t("gameStarted"));

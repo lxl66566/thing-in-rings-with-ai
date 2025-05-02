@@ -20,7 +20,7 @@ const toEmoji = (value: boolean) => {
 };
 
 const MainList: Component = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [name, setName] = createSignal("");
   const [description, setDescription] = createSignal("");
   const [word, setWord] = createSignal(false);
@@ -84,7 +84,7 @@ const MainList: Component = () => {
 
     try {
       // 调用模拟的异步创建函数
-      const judgementResult = await judgeItemPlacement(userInputItem, userInputArea);
+      const judgementResult = await judgeItemPlacement(language, userInputItem, userInputArea);
       const actualResult = judgementResult?.isCorrect ? userInputArea : judgementResult?.correctJudgement;
       console.log(actualResult, judgementResult?.explanation);
 
@@ -106,7 +106,7 @@ const MainList: Component = () => {
       setItems((prev) => [...prev, newItem]);
     } catch (error) {
       console.error("Error creating item:", error);
-      // 处理错误，例如显示错误消息给用户
+      toast.error(error instanceof Error ? error.message : "Unknown error");
     } finally {
       setIsLoading(false); // 结束加载
       resetUserInput();
