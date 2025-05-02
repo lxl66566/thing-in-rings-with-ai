@@ -19,9 +19,9 @@ const App: Component = () => {
   };
 
   return (
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen flex flex-col pb-2 m-2">
       {/* 顶部工具栏 */}
-      <div class="fixed top-4 right-4 z-40 ">
+      <div class="top-4 right-4 z-40 flex-none flex justify-end">
         <div class="flex items-center">
           <button onClick={() => setIsConfigModalOpen(true)} class="flex items-center px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50 transition-colors">
             {/* <FiSettings /> */}

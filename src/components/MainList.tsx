@@ -112,7 +112,7 @@ const MainList: Component<MainListProps> = (props) => {
       {/* <h1 class="text-2xl font-bold mb-6 text-gray-800">Venn Area Creator</h1> */}
 
       {/* 输入行 */}
-      <div class="flex flex-col sm:w-auto sm:flex-row items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-white rounded-lg shadow-md sticky top-15 z-10">
+      <div class="flex w-auto flex-row flex-wrap md:flex-nowrap items-start sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-6 p-4 sm:p-6 bg-white rounded-lg shadow sticky top-5 z-10">
         {/* Name 输入框 */}
         <div class="w-[calc(100%-2rem)] sm:w-auto">
           <input
@@ -121,7 +121,7 @@ const MainList: Component<MainListProps> = (props) => {
             value={name()}
             placeholder={t("word")}
             onInput={(e) => setName(e.currentTarget.value)}
-            class="p-2 border border-gray-300 rounded-md w-full sm:w-30 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="p-2 border border-gray-300 rounded-md w-full sm:min-w-25 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
@@ -133,12 +133,12 @@ const MainList: Component<MainListProps> = (props) => {
             value={description()}
             onInput={(e) => setDescription(e.currentTarget.value)}
             placeholder={t("description")}
-            class="p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="p-2 border border-gray-300 rounded-md w-full sm:min-w-25 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         {/* Checkboxes 容器 */}
-        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 pt-2 sm:pt-0">
+        <div class="flex flex-row flex-nowrap w-auto items-center space-y-2 sm:space-y-0 sm:space-x-4 pt-2 sm:pt-0">
           {/* Word Checkbox */}
           <label class="flex items-center cursor-pointer text-gray-700">
             <input
@@ -177,7 +177,7 @@ const MainList: Component<MainListProps> = (props) => {
         <button
           onClick={handleCreate}
           disabled={isLoading() || props.isStarting()}
-          class="w-[calc(100%-2rem)] sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-[calc(100%-2rem)] min-w-10 sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading() ? t("llmGenerating") : t("create")}
         </button>
@@ -189,76 +189,69 @@ const MainList: Component<MainListProps> = (props) => {
         <span class="text-sm text-gray-600">{t("ItemsListDescription")}</span>
       </div>
 
-      <div class="overflow-x-auto w-full bg-white rounded-lg shadow-md">
-        <table class="min-w-full max-w-full divide-y divide-gray-200 table-fixed">
+      <div class="w-full overflow-x-auto bg-white rounded-lg shadow-md">
+        <table class="w-auto min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Description
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-yellow-500 uppercase tracking-wider w-[10%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-yellow-500 uppercase tracking-wider">
                 Word
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-red-500 uppercase tracking-wider w-[10%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-red-500 uppercase tracking-wider">
                 Attribute
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider w-[10%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
                 Context
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[40%]">
+              <th scope="col" class="px-2 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Explanation
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            {/* 使用 SolidJS 的 For 指令渲染列表 */}
             <For each={props.items()}>
               {(item) => (
                 <tr>
-                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800 flex items-center justify-center gap-0.5">
-                    <span class="flex-shrink-0 transform -translate-y-1/12 pr-2">{item.name}</span>
-                    <ColorPicker selectedColor={item.color || "#FFFFFF"} onColorSelect={(color) => updateItemColor(item.id, color)} />
+                  <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm text-gray-800 flex items-center">
+                    <div class="flex items-center gap-0.5 flex-nowrap">
+                      <span class="flex-shrink-0 pr-2">{item.name}</span>
+                      <ColorPicker selectedColor={item.color || "#FFFFFF"} onColorSelect={(color) => updateItemColor(item.id, color)} />
+                    </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.description}</td>
-
-                  {/* Word 列，根据用户输入与实际值对比标红或标绿 */}
+                  <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-normal break-words text-sm text-gray-800">{item.description}</td>
                   <td
-                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm font-medium"
                     classList={{
                       "bg-red-100 text-red-800": item.userInput.word !== item.actualResult.word,
                       "bg-green-100 text-green-800": item.userInput.word === item.actualResult.word,
                     }}
                   >
-                    {toEmoji(item.actualResult.word)} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.word)}
                   </td>
-
-                  {/* Attribute 列 */}
                   <td
-                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm font-medium"
                     classList={{
                       "bg-red-100 text-red-800": item.userInput.attribute !== item.actualResult.attribute,
                       "bg-green-100 text-green-800": item.userInput.attribute === item.actualResult.attribute,
                     }}
                   >
-                    {toEmoji(item.actualResult.attribute)} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.attribute)}
                   </td>
-
-                  {/* Context 列 */}
                   <td
-                    class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                    class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-sm font-medium"
                     classList={{
                       "bg-red-100 text-red-800": item.userInput.context !== item.actualResult.context,
                       "bg-green-100 text-green-800": item.userInput.context === item.actualResult.context,
                     }}
                   >
-                    {toEmoji(item.actualResult.context)} {/* 显示实际值 */}
+                    {toEmoji(item.actualResult.context)}
                   </td>
-
-                  {/* Explanation 列 */}
-                  <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">
+                  <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-normal break-words text-sm text-gray-800">
                     <details>
                       <summary>{t("expandExplanation")}</summary>
                       {item.explanation}

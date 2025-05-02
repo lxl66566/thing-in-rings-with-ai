@@ -37,9 +37,9 @@ export const Game: Component<GameProps> = (props) => {
   };
 
   return (
-    <div class="min-h-screen flex flex-col justify-center bg-white shadow-lg">
+    <div class="min-h-screen flex flex-col flex-1 overflow-auto justify-center bg-white shadow-lg">
       <Show when={!gameState.isStarted}>
-        <div class="flex flex-col align-center justify-center items-center mb-8 p-8 gap-4">
+        <div class="flex flex-col align-center justify-center items-center mb-8 p-4 gap-4">
           <div class="text-gray-700 text-base">
             <SolidMarkdown children={t("startGameDescription")} />
           </div>
@@ -60,7 +60,7 @@ export const Game: Component<GameProps> = (props) => {
       </Show>
 
       <Show when={gameState.isStarted}>
-        <div class="flex flex-col align-center justify-center items-center mb-8 py-4">
+        <div class="flex flex-col sm:w-auto align-center justify-center items-center mb-8 py-4">
           <div class="flex items-center justify-center gap-2">
             <ConfirmButton
               children={isStarting() ? t("llmGenerating") : t("restartGame")}
@@ -69,7 +69,7 @@ export const Game: Component<GameProps> = (props) => {
             ></ConfirmButton>
             <ConfirmButton children={t("showGeneratedAttributes")} onConfirm={() => setShowGeneratedAttributes(true)}></ConfirmButton>
           </div>
-          <div class="flex-1">
+          <div class="flex-1 max-w-screen">
             <MainList items={items} setItems={setItems} isStarting={isStarting} />
           </div>
         </div>
