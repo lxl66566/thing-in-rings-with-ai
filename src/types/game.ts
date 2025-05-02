@@ -32,3 +32,14 @@ export type JudgementResult = {
   correctArea?: VennArea;
   explanation: string;
 };
+
+// 定义表格中每个条目的类型
+// 包含用户输入的值和异步函数返回的实际值
+export type TableItem = {
+  id: number; // 用于列表渲染的唯一key
+  name: string;
+  description: string;
+  userInput: VennArea; // 用户输入时的VennArea值
+  actualResult: VennArea; // 异步函数返回的实际VennArea值
+  explanation: string;
+};

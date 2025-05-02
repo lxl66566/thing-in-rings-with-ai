@@ -1,25 +1,20 @@
-import { createSignal, For, Component } from "solid-js";
-import { VennArea } from "../types/game";
+import { createSignal, For, Component, Setter, Accessor } from "solid-js";
+import { TableItem, VennArea } from "../types/game";
 import { judgeItemPlacement } from "../llm";
 import { toast } from "solid-toast";
 import { useLanguage } from "../i18n/LanguageContext";
-
-// 定义表格中每个条目的类型
-// 包含用户输入的值和异步函数返回的实际值
-type TableItem = {
-  id: number; // 用于列表渲染的唯一key
-  name: string;
-  description: string;
-  userInput: VennArea; // 用户输入时的VennArea值
-  actualResult: VennArea; // 异步函数返回的实际VennArea值
-  explanation: string;
-};
 
 const toEmoji = (value: boolean) => {
   return value ? "✅" : "❌";
 };
 
-const MainList: Component = () => {
+interface MainListProps {
+  items: Accessor<TableItem[]>;
+  setItems: Setter<TableItem[]>;
+  isStarting: Accessor<boolean>;
+}
+
+const MainList: Component<MainListProps> = (props) => {
   const { t, language } = useLanguage();
   const [name, setName] = createSignal("");
   const [description, setDescription] = createSignal("");
@@ -27,7 +22,6 @@ const MainList: Component = () => {
   const [attribute, setAttribute] = createSignal(false);
   const [context, setContext] = createSignal(false);
 
-  const [items, setItems] = createSignal<TableItem[]>([]); // 存储表格数据的数组信号
   const [isLoading, setIsLoading] = createSignal(false); // 用于表示加载状态
 
   // fake data
@@ -103,7 +97,7 @@ const MainList: Component = () => {
         explanation: judgementResult?.explanation || t("noExplanation"),
       };
       // 更新表格数据状态
-      setItems((prev) => [...prev, newItem]);
+      props.setItems((prev) => [...prev, newItem]);
     } catch (error) {
       console.error("Error creating item:", error);
       toast.error(error instanceof Error ? error.message : "Unknown error");
@@ -182,7 +176,7 @@ const MainList: Component = () => {
         {/* 创建按钮 */}
         <button
           onClick={handleCreate}
-          disabled={isLoading()}
+          disabled={isLoading() || props.isStarting()}
           class="w-[calc(100%-2rem)] sm:w-auto px-6 py-2 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading() ? t("llmGenerating") : t("create")}
@@ -221,7 +215,7 @@ const MainList: Component = () => {
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             {/* 使用 SolidJS 的 For 指令渲染列表 */}
-            <For each={items()}>
+            <For each={props.items()}>
               {(item) => (
                 <tr>
                   <td class="px-6 py-4 whitespace-normal break-words text-sm text-gray-800">{item.name}</td>

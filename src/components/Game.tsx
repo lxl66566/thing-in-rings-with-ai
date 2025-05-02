@@ -8,6 +8,7 @@ import { SolidMarkdown } from "solid-markdown";
 import { getConfig, isConfigValid } from "../config";
 import { Modal } from "./common/Modal";
 import { ConfirmButton } from "./common/ConfirmButton";
+import { TableItem } from "../types/game";
 
 interface GameProps {
   openConfigModal: () => void;
@@ -19,12 +20,15 @@ export const Game: Component<GameProps> = (props) => {
   const [isStarting, setIsStarting] = createSignal(false);
   const [showGeneratedAttributes, setShowGeneratedAttributes] = createSignal(false);
 
+  const [items, setItems] = createSignal<TableItem[]>([]); // 存储表格数据的数组信号
+
   const handleStartGame = async () => {
     if (!isConfigValid(getConfig())) {
       props.openConfigModal();
       return;
     }
     resetGame();
+    setItems([]);
     setIsStarting(true);
     const attr = await GenerateGameAttributes(language);
     startGame(attr);
@@ -66,7 +70,7 @@ export const Game: Component<GameProps> = (props) => {
             <ConfirmButton children={t("showGeneratedAttributes")} onConfirm={() => setShowGeneratedAttributes(true)}></ConfirmButton>
           </div>
           <div class="flex-1">
-            <MainList />
+            <MainList items={items} setItems={setItems} isStarting={isStarting} />
           </div>
         </div>
       </Show>
