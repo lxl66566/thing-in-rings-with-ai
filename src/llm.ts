@@ -77,7 +77,7 @@ export const judgeItemPlacement = async (lang: Language, item: { word: string; d
 你拥有绝对的理性，请：
 1. 判断某位用户对“名词与游戏预设特征之间的关系”的断言是否正确。
 2. 判断该名词实际上是否符合这些游戏特征。对于每一个特征，只能有“符合”或“不符合”两种结果。
-3. 并对你的判断作出解释。`
+3. 并对你的判断作出中文解释。`
       : `Assume you are an ordinary person living in USA, serving as a referee in a game. Below are the three preset characteristics in the game:  
 1. Attribute: ${gameAttributes.attribute}  
 2. Context: ${gameAttributes.context}  
@@ -86,7 +86,7 @@ export const judgeItemPlacement = async (lang: Language, item: { word: string; d
 You possess absolute rationality. Please:  
 1. Determine whether a user’s assertion about "the relationship between the noun and the game’s preset characteristics" is correct.  
 2. Assess whether the noun actually matches these game characteristics. For each characteristic, the only possible results are "matches" or "does not match."  
-3. Provide an explanation for your judgment.
+3. Provide an English explanation for your judgment.
 `;
   const config = getConfig();
   const result = await generateObject({

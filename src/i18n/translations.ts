@@ -33,7 +33,7 @@ export const translations = {
     configureLLM: "Configure LLM",
     configureLLMFirst: "Please configure LLM settings first",
     ItemsListDescription:
-      "(The ✅❌ displayed in the list are the true attributes of the items, and the red and green background indicates the correctness of the user's response.)",
+      "(The ✅❌ displayed in the list are the actual attributes of the items, and the red and green background indicates the correctness of the user's response.)",
     noItemsAdded: "No items added yet",
     ItemsList: "Items List",
     showGeneratedAttributes: "Show LLM generated attributes",
@@ -43,19 +43,21 @@ export const translations = {
     loading: "Loading...",
     llmGenerating: "Generating...",
     noExplanation: "No explanation returned by the model",
-    startGameDescription: `_Thing in Rings_ is a game for multiple players and one God. 
+    startGameDescription: `_Thing in Rings_ is a game for multiple players and one Referee.
 
-The core mechanic revolves around a three-zone Venn diagram. At the start, the God randomly selects attributes for each zone of the Venn diagram, these attributes remain hidden from players: 
-- **Attribute**: represents subjective qualities of objects
-- **Context**: represents objective qualities
+The core mechanic revolves around a three-zone Venn diagram. At the start, the Referee randomly selects attributes for each zone of the Venn diagram, these attributes remain hidden from players: 
+- **Attribute**: represents relatively subjective qualities of objects
+- **Context**: represents relatively objective qualities
 - **Word**: represents characteristics of the object's English name
 
-Each player holds a set of private items unseen by others. Each turn, a player places one item into a zone of the Venn diagram (or outside it, representing None). The God judges whether the item matches the zone's attributes:
+The Referee will puts 3 initial items into the diagram.
+
+Each player holds 5 private items unseen by others. Each turn, a player places one item into a zone of the Venn diagram (or outside it, representing None). The Referee judges whether the item matches the zone's attributes:
 - If correct: the player continues their turn (may place another item)
-- If incorrect: the player draws a random item, which the God then places in the correct zone, and the turn passes to the next player
+- If incorrect: the player draws a random item, which the Referee then places in the correct zone, and the turn passes to the next player
 
 The winning condition is being the first to play all cards from one's hand.`,
-    announcement: `This website does not provide the full game functionality, but instead uses AI to act as the "God," handling the initial setup of zone attributes and judging whether played cards are correct. You will still need to prepare physical item cards for your friends to play with. `,
+    announcement: `This website does not provide the full game functionality, but instead uses AI to act as the "Referee," handling the initial setup of zone attributes and judging whether played cards are correct. You will still need to prepare physical item cards for your friends to play with. `,
   },
   zh: {
     save: "保存",
@@ -98,20 +100,21 @@ The winning condition is being the first to play all cards from one's hand.`,
     showGeneratedAttributes: "显示模型生成的预设属性",
     ItemsListDescription: "（列表中显示的✅❌是物品的真实属性，背景的红色和绿色指示了用户回答的正确性）",
     generatedAttributes: "模型生成的预设属性",
-    startGameDescription: `_Thing in Rings_ 是一款多人加一位"上帝"参与的桌游。
+    startGameDescription: `_Thing in Rings_ 是一款多人加一位"裁判"参与的桌游。[查看实况视频](https://www.bilibili.com/video/BV1qxdUY1EUx/)
 
-游戏核心机制围绕三连通 venn 图展开。开局时，"上帝"会为 venn 图的每个区域随机选定属性，这些属性对玩家保密：
-- **Attribute**（属性）：代表物品的主观特性
-- **Context**（语境）：代表物品的客观特性
-- **Word**（词汇）：代表物品英文单词的特征
+游戏核心机制围绕三连通 venn 图展开。开局时，"裁判"会为 venn 图的每个区域随机选定属性，这些属性对玩家保密：
+- **Attribute**：代表物品的相对主观特性
+- **Context**：代表物品的相对客观特性
+- **Word**：代表物品英文单词的特征
 
+并且"裁判"向 venn 图上放入 3 个初始物品。
 
-每位玩家持有一组其他玩家不可见的物品。每回合，玩家将一个物品放入 venn 图的某个区域（包括图外，代表 None）。"上帝"会判断该物品是否符合该区域的属性：
+每位玩家持有 5 个其他玩家不可见的物品。每回合，玩家将一个物品放入 venn 图的某个区域（包括图外，代表 None）。"裁判"会判断该物品是否符合该区域的属性：
 - 若符合：该玩家继续回合（可再放置物品）；
-- 若不符合：玩家抽取一张随机物品，"上帝"会将该物品放入正确区域，并移交回合给下一位玩家。
+- 若不符合：玩家抽取一张随机物品，"裁判"会将该物品放入正确区域，并移交回合给下一位玩家。
 
 胜利条件是率先打空手牌的玩家获胜。`,
-    announcement: `该网站并不提供完整的游戏功能，而是由 AI 担任“上帝”的角色，负责开局区域属性的设置以及出牌正确性的判断。你仍然需要为朋友们准备好实体物品卡以供游戏使用。`,
+    announcement: `该网站并不提供完整的游戏功能，而是由 AI 担任“裁判”的角色，负责开局区域属性的设置以及出牌正确性的判断。你仍然需要为朋友们准备好实体物品卡以供游戏使用。`,
   },
 } as const;
 
