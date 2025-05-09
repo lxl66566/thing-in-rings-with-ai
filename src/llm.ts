@@ -14,7 +14,6 @@ const attributesSchema = v.object({
 
 // 验证 LLM 判断结果的 schema
 const judgementSchema = v.object({
-  isCorrect: v.boolean(),
   correctJudgement: v.optional(
     v.object({
       attribute: v.boolean(),
@@ -64,7 +63,7 @@ context: Represents the relatively objective properties the object might have. F
 /**
  * 判断名词放置是否正确
  */
-export const judgeItemPlacement = async (lang: Language, item: { word: string; description?: string }, area: VennArea) => {
+export const judgeItemPlacement = async (lang: Language, item: { word: string; description?: string }) => {
   const gameAttributes = getGameState().attributes;
   if (!gameAttributes) return;
   const prompt =
@@ -75,18 +74,16 @@ export const judgeItemPlacement = async (lang: Language, item: { word: string; d
 3. Word: ${gameAttributes.word}
 
 你拥有绝对的理性，请：
-1. 判断某位用户对“名词与游戏预设特征之间的关系”的断言是否正确。对于 Word 特征只考虑英文单词。
-2. 判断该名词实际上是否符合这些游戏特征。对于每一个特征，只能有“符合”或“不符合”两种结果。
-3. 对你的判断作出中文解释，并再次检查返回的结构化数据是否正确。`
+1. 判断给出的名词实际上是否符合这些游戏特征。对于每一个特征，只能有“符合”或“不符合”两种结果。
+2. 对你的判断作出中文解释。`
       : `Assume you are an ordinary person living in USA, serving as a referee in a game. Below are the three preset characteristics in the game:  
 1. Attribute: ${gameAttributes.attribute}  
 2. Context: ${gameAttributes.context}  
 3. Word: ${gameAttributes.word}  
 
 You possess absolute rationality. Please:  
-1. Determine whether a user’s assertion about "the relationship between the noun and the game’s preset characteristics" is correct.  
-2. Assess whether the noun actually matches these game characteristics. For each characteristic, the only possible results are "matches" or "does not match."  
-3. Provide an English explanation for your judgment, and check the structured data returned again.
+1. Assess whether the noun actually matches these game characteristics. For each characteristic, the only possible results are "matches" or "does not match."  
+2. Provide an English explanation for your judgment.
 `;
   const config = getConfig();
   const result = await generateObject({
@@ -100,11 +97,7 @@ You possess absolute rationality. Please:
       },
       {
         role: "user",
-        content: `Item: "${item.word}"${item.description ? ` (${item.description})` : ""}
-User assert:
-- Attribute: ${area.attribute.toString()}
-- Context: ${area.context.toString()}
-- Word: ${area.word.toString()}`,
+        content: `Item: "${item.word}"${item.description ? ` (${item.description})` : ""}`,
       },
     ],
     schema: judgementSchema,

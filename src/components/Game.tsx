@@ -67,8 +67,8 @@ export const Game: Component<GameProps> = (props) => {
     };
 
     try {
-      const judgementResult = await judgeItemPlacement(language, userInputItem, area);
-      const actualResult = judgementResult?.isCorrect ? area : judgementResult?.correctJudgement;
+      const judgementResult = await judgeItemPlacement(language, userInputItem);
+      const actualResult = judgementResult?.correctJudgement;
 
       if (!actualResult) {
         toast.error("Incorrect judgement");

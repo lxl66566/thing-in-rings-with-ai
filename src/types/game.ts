@@ -28,7 +28,6 @@ export type GameState = {
  * LLM 判断结果的类型
  */
 export type JudgementResult = {
-  isCorrect: boolean;
   correctArea?: VennArea;
   explanation: string;
 };
