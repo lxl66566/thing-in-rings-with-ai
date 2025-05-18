@@ -11,3 +11,9 @@ You don't need to buy the game; just make some nounce cards, take a rope, and pl
 ## Screenshots
 
 ![image](./assets/screenshot.png)
+
+## Pic
+
+That's how I and my friends play it.
+
+![image](./assets/playing.jpg)
