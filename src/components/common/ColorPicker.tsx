@@ -1,4 +1,4 @@
-import { Component, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show, For } from "solid-js";
 import { Portal } from "solid-js/web";
 
 interface ColorPickerProps {
@@ -47,9 +47,15 @@ export const ColorPicker: Component<ColorPickerProps> = (props) => {
             }}
           >
             <div class="grid grid-cols-4 gap-1">
-              {colors.map((color) => (
-                <button class="w-6 h-6 rounded hover:scale-110 transition-transform" style={{ "background-color": color }} onClick={() => selectColor(color)} />
-              ))}
+              <For each={colors}>
+                {(color: string) => (
+                  <button
+                    class="w-6 h-6 rounded hover:scale-110 transition-transform"
+                    style={{ "background-color": color }}
+                    onClick={() => selectColor(color)}
+                  />
+                )}
+              </For>
             </div>
           </div>
         </Portal>

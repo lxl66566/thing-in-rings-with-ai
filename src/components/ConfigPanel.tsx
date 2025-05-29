@@ -1,5 +1,5 @@
-import { Component, createSignal } from "solid-js";
-import { LLMConfig, defaultConfig, getConfig, saveConfig } from "../config";
+import { type Component, createSignal } from "solid-js";
+import { type LLMConfig, defaultConfig, getConfig, saveConfig } from "../config";
 import { useLanguage } from "../i18n/LanguageContext";
 
 interface ConfigPanelProps {

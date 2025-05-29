@@ -1,9 +1,8 @@
-import { VennArea } from "./types/game";
 import * as v from "valibot";
 import { generateObject } from "xsai";
 import { getConfig } from "./config";
 import { getGameState } from "./store/gameStore";
-import { Language } from "./i18n/translations";
+import type { Language } from "./i18n/translations";
 
 // 验证 LLM 返回的特征的 schema
 const attributesSchema = v.object({
@@ -27,7 +26,13 @@ const judgementSchema = v.object({
 /**
  * 开始新游戏
  */
-export const GenerateGameAttributes = async (lang: Language) => {
+export const GenerateGameAttributes = async (
+  lang: Language,
+): Promise<{
+  attribute: string;
+  context: string;
+  word: string;
+}> => {
   const config = getConfig();
 
   const prompt =
@@ -63,7 +68,22 @@ context: Represents the relatively objective properties the object might have. F
 /**
  * 判断名词放置是否正确
  */
-export const judgeItemPlacement = async (lang: Language, item: { word: string; description?: string }) => {
+export const judgeItemPlacement = async (
+  lang: Language,
+  item: { word: string; description?: string },
+): Promise<
+  | {
+      correctJudgement?:
+        | {
+            attribute: boolean;
+            context: boolean;
+            word: boolean;
+          }
+        | undefined;
+      explanation: string;
+    }
+  | undefined
+> => {
   const gameAttributes = getGameState().attributes;
   if (!gameAttributes) return;
   const prompt =

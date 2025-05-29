@@ -5,7 +5,6 @@ import { Toaster } from "solid-toast";
 import "./index.css";
 import App from "./App";
 import { LanguageProvider } from "./i18n/LanguageContext";
-import { MainList } from "./components/MainList";
 
 const root = document.getElementById("root");
 

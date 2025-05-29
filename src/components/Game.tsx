@@ -1,4 +1,4 @@
-import { Component, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { useLanguage } from "../i18n/LanguageContext";
 import { toast } from "solid-toast";
 import { MainList } from "./MainList";
@@ -8,7 +8,7 @@ import { SolidMarkdown } from "solid-markdown";
 import { getConfig, isConfigValid } from "../config";
 import { Modal } from "./common/Modal";
 import { ConfirmButton } from "./common/ConfirmButton";
-import { TableItem, VennArea } from "../types/game";
+import type { TableItem, VennArea } from "../types/game";
 import InputBar from "./InputBar";
 
 interface GameProps {

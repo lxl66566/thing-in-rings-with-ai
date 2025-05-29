@@ -1,5 +1,5 @@
-import { For, Component, Setter, Accessor } from "solid-js";
-import { TableItem } from "../types/game";
+import { For, type Component, type Setter, type Accessor } from "solid-js";
+import type { TableItem } from "../types/game";
 import { useLanguage } from "../i18n/LanguageContext";
 import { ColorPicker } from "./common/ColorPicker";
 

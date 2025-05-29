@@ -1,6 +1,6 @@
-import { createContext, useContext, ParentComponent } from "solid-js";
+import { createContext, useContext, type ParentComponent } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Language, TranslationKey, translations } from "./translations";
+import { type Language, type TranslationKey, translations } from "./translations";
 
 type LanguageContextType = {
   language: Language;
@@ -35,7 +35,7 @@ export const LanguageProvider: ParentComponent = (props) => {
   );
 };
 
-export const useLanguage = () => {
+export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
     throw new Error("useLanguage must be used within a LanguageProvider");

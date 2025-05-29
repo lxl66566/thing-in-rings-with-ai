@@ -1,6 +1,6 @@
-import { Accessor, Component, createSignal } from "solid-js";
+import { type Accessor, type Component, createSignal } from "solid-js";
 import { useLanguage } from "../i18n/LanguageContext";
-import { VennArea } from "../types/game";
+import type { VennArea } from "../types/game";
 import toast from "solid-toast";
 
 interface InputBarProps {

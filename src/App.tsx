@@ -1,4 +1,4 @@
-import { Component, createSignal } from "solid-js";
+import { type Component, createSignal } from "solid-js";
 import { useLanguage } from "./i18n/LanguageContext";
 import { ConfigPanel } from "./components/ConfigPanel";
 import { Modal } from "./components/common/Modal";
