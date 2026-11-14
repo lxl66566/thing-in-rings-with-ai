@@ -1,7 +1,7 @@
 import { generateObject } from '@xsai/generate-object';
 import * as v from 'valibot';
 
-import { getConfig } from './config';
+import { type ProviderId, getConfig } from './config';
 import type { Language } from './i18n/translations';
 import { getGameState } from './store/gameStore';
 
@@ -23,6 +23,74 @@ const judgementSchema = v.object({
   ),
   explanation: v.string(),
 });
+
+/**
+ * xsai 硬编码 `response_format: json_schema`，但部分 OpenAI 兼容服务不支持该
+ * 类型（DeepSeek 返回 400 "This response_format type is unavailable now"，
+ * 仅支持 `json_object`）。对这些 provider 用自定义 fetch 把请求改写为 JSON
+ * 模式，并把 schema 描述追加到 system 消息里；业务 prompt/schema 完全不动。
+ */
+const JSON_SCHEMA_UNSUPPORTED_PROVIDERS: ReadonlySet<ProviderId> = new Set([
+  'deepseek',
+]);
+
+interface ChatCompletionBody {
+  [key: string]: unknown;
+  messages: { content: unknown; role: string }[];
+  response_format?: {
+    json_schema?: { schema?: unknown };
+    type?: string;
+  };
+}
+
+// `json_object` 模式只保证"是合法 JSON"，不保证符合 schema，且偶发残缺输出
+// （真机遇到一次截断导致 JSON.parse 失败），所以对改写后的请求做一次重试。
+const isParseableChatCompletionJSON = async (
+  response: Response,
+): Promise<boolean> => {
+  try {
+    const completion = JSON.parse(await response.clone().text()) as {
+      choices?: { message?: { content?: string } }[];
+    };
+    const content = completion.choices?.[0]?.message?.content;
+    if (typeof content !== 'string') return false;
+    JSON.parse(content);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const jsonModeFetch: typeof fetch = async (input, init) => {
+  const body = typeof init?.body === 'string' ? init.body : undefined;
+  if (body === undefined) return fetch(input, init);
+  const request = JSON.parse(body) as ChatCompletionBody;
+  const schema = request.response_format?.json_schema?.schema;
+  if (request.response_format?.type !== 'json_schema' || schema === undefined) {
+    return fetch(input, init);
+  }
+  const rewrittenBody = JSON.stringify({
+    ...request,
+    messages: [
+      ...request.messages,
+      {
+        content: `Respond with a single JSON object and nothing else. The object must conform to this JSON Schema: ${JSON.stringify(schema)}`,
+        role: 'system',
+      },
+    ],
+    response_format: { type: 'json_object' },
+  });
+  const requestInit: RequestInit = { ...init, body: rewrittenBody };
+  const response = await fetch(input, requestInit);
+  if (!response.ok || (await isParseableChatCompletionJSON(response))) {
+    return response;
+  }
+  return fetch(input, requestInit);
+};
+
+/** Per-provider fetch; `undefined` keeps xsai's default global fetch. */
+const fetchForProvider = (provider: ProviderId): typeof fetch | undefined =>
+  JSON_SCHEMA_UNSUPPORTED_PROVIDERS.has(provider) ? jsonModeFetch : undefined;
 
 /**
  * 开始新游戏
@@ -52,6 +120,7 @@ context: Represents the relatively objective properties the object might have. F
   const attributes = await generateObject({
     apiKey: config.apiKey,
     baseURL: config.baseURL,
+    fetch: fetchForProvider(config.provider),
     messages: [
       {
         content: prompt,
@@ -110,6 +179,7 @@ You possess absolute rationality. Please:
   const result = await generateObject({
     apiKey: config.apiKey,
     baseURL: config.baseURL,
+    fetch: fetchForProvider(config.provider),
     messages: [
       {
         content: prompt,
