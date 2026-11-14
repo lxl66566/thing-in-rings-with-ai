@@ -112,7 +112,7 @@ export const Game: Component<GameProps> = props => {
   };
 
   return (
-    <div class="overflow-visable flex min-h-screen flex-1 flex-col justify-center bg-white shadow-lg">
+    <div class="flex min-h-screen flex-1 flex-col justify-center overflow-visible bg-white shadow-lg">
       <Show when={!gameState.isStarted}>
         <div class="align-center mb-8 flex flex-col items-center justify-center gap-4 p-4">
           <div class="text-base text-gray-700">

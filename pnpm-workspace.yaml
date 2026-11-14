@@ -2,3 +2,28 @@ allowBuilds:
   esbuild: true
   simple-git-hooks: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@unocss/autocomplete@66.13.0'
+  - '@unocss/cli@66.13.0'
+  - '@unocss/config@66.13.0'
+  - '@unocss/core@66.13.0'
+  - '@unocss/extractor-arbitrary-variants@66.13.0'
+  - '@unocss/inspector@66.13.0'
+  - '@unocss/preset-attributify@66.13.0'
+  - '@unocss/preset-icons@66.13.0'
+  - '@unocss/preset-mini@66.13.0'
+  - '@unocss/preset-tagify@66.13.0'
+  - '@unocss/preset-typography@66.13.0'
+  - '@unocss/preset-uno@66.13.0'
+  - '@unocss/preset-web-fonts@66.13.0'
+  - '@unocss/preset-wind3@66.13.0'
+  - '@unocss/preset-wind4@66.13.0'
+  - '@unocss/preset-wind@66.13.0'
+  - '@unocss/rollup@66.13.0'
+  - '@unocss/rule-utils@66.13.0'
+  - '@unocss/transformer-attributify-jsx@66.13.0'
+  - '@unocss/transformer-compile-class@66.13.0'
+  - '@unocss/transformer-directives@66.13.0'
+  - '@unocss/transformer-variant-group@66.13.0'
+  - '@unocss/vite@66.13.0'
+  - unocss@66.13.0

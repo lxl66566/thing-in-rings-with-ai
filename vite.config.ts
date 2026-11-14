@@ -1,4 +1,4 @@
-import tailwindcss from '@tailwindcss/vite';
+import UnoCSS from 'unocss/vite';
 import type { UserConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 import { defineConfig } from 'vitest/config';
@@ -12,7 +12,7 @@ const config: UserConfig = defineConfig({
   optimizeDeps: {
     include: ['solid-markdown > micromark', 'solid-markdown > unified'],
   },
-  plugins: [tailwindcss(), solidPlugin()],
+  plugins: [UnoCSS(), solidPlugin()],
   server: {
     port: 3000,
   },

@@ -2,6 +2,7 @@
 import { render } from 'solid-js/web';
 import { Toaster } from 'solid-toast';
 
+import 'virtual:uno.css';
 import './index.css';
 import App from './App';
 import { LanguageProvider } from './i18n/LanguageContext';

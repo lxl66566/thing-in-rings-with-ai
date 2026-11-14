@@ -1,5 +1,5 @@
+import { generateObject } from '@xsai/generate-object';
 import * as v from 'valibot';
-import { generateObject } from 'xsai';
 
 import { getConfig } from './config';
 import type { Language } from './i18n/translations';
