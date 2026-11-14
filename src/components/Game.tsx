@@ -1,25 +1,27 @@
-import { type Component, createSignal, Show } from "solid-js";
-import { useLanguage } from "../i18n/LanguageContext";
-import { toast } from "solid-toast";
-import { MainList } from "./MainList";
-import { getGameState, resetGame, startGame } from "../store/gameStore";
-import { GenerateGameAttributes, judgeItemPlacement } from "../llm";
-import { SolidMarkdown } from "solid-markdown";
-import { getConfig, isConfigValid } from "../config";
-import { Modal } from "./common/Modal";
-import { ConfirmButton } from "./common/ConfirmButton";
-import type { TableItem, VennArea } from "../types/game";
-import InputBar from "./InputBar";
+import { type Component, createSignal, Show } from 'solid-js';
+import { SolidMarkdown } from 'solid-markdown';
+import { toast } from 'solid-toast';
+
+import { getConfig, isConfigValid } from '../config';
+import { useLanguage } from '../i18n/LanguageContext';
+import { GenerateGameAttributes, judgeItemPlacement } from '../llm';
+import { getGameState, resetGame, startGame } from '../store/gameStore';
+import type { TableItem, VennArea } from '../types/game';
+import { ConfirmButton } from './common/ConfirmButton';
+import { Modal } from './common/Modal';
+import InputBar from './InputBar';
+import { MainList } from './MainList';
 
 interface GameProps {
   openConfigModal: () => void;
 }
 
-export const Game: Component<GameProps> = (props) => {
+export const Game: Component<GameProps> = props => {
   const gameState = getGameState();
-  const { t, language } = useLanguage();
+  const { language, t } = useLanguage();
   const [isStarting, setIsStarting] = createSignal(false);
-  const [showGeneratedAttributes, setShowGeneratedAttributes] = createSignal(false);
+  const [showGeneratedAttributes, setShowGeneratedAttributes] =
+    createSignal(false);
 
   const [items, setItems] = createSignal<TableItem[]>([]); // 存储表格数据的数组信号
 
@@ -53,90 +55,117 @@ export const Game: Component<GameProps> = (props) => {
     resetGame();
     setItems([]);
     setIsStarting(true);
-    const attr = await GenerateGameAttributes(language);
+    const attr = await GenerateGameAttributes(language());
     startGame(attr);
     setIsStarting(false);
-    toast.success(t("gameStarted"));
+    toast.success(t('gameStarted'));
   };
 
   // 处理"创建"按钮点击事件的异步函数
-  const handleCreate = async (name: string, description: string, area: VennArea, callback: () => void) => {
+  const handleCreate = async (
+    name: string,
+    description: string,
+    area: VennArea,
+    callback: () => void,
+  ) => {
     const userInputItem = {
-      word: name,
       description: description,
+      word: name,
     };
 
     try {
-      const judgementResult = await judgeItemPlacement(language, userInputItem);
+      const judgementResult = await judgeItemPlacement(
+        language(),
+        userInputItem,
+      );
       const actualResult = judgementResult?.correctJudgement;
 
       if (!actualResult) {
-        toast.error("Incorrect judgement");
+        toast.error('Incorrect judgement');
         return;
       }
 
       const newItem: TableItem = {
+        actualResult: actualResult,
+        color: '#FFFFFF', // 默认颜色
+        description: description,
+        explanation: judgementResult.explanation || t('noExplanation'),
         id: Date.now(),
         name: name,
-        description: description,
-        color: "#FFFFFF", // 默认颜色
         userInput: area,
-        actualResult: actualResult,
-        explanation: judgementResult?.explanation || t("noExplanation"),
       };
-      setItems((prev) => [...prev, newItem]);
+      setItems(prev => [...prev, newItem]);
     } catch (error) {
-      console.error("Error creating item:", error);
-      toast.error(error instanceof Error ? error.message : "Unknown error");
+      console.error('Error creating item:', error);
+      toast.error(error instanceof Error ? error.message : 'Unknown error');
     } finally {
       callback();
     }
   };
-  const dispatchHandleCreate = (name: string, description: string, area: VennArea, callback: () => void) => {
-    handleCreate(name, description, area, callback);
+  const dispatchHandleCreate = (
+    name: string,
+    description: string,
+    area: VennArea,
+    callback: () => void,
+  ) => {
+    void handleCreate(name, description, area, callback);
   };
 
   return (
-    <div class="min-h-screen flex flex-col flex-1 overflow-visable justify-center bg-white shadow-lg">
+    <div class="overflow-visable flex min-h-screen flex-1 flex-col justify-center bg-white shadow-lg">
       <Show when={!gameState.isStarted}>
-        <div class="flex flex-col align-center justify-center items-center mb-8 p-4 gap-4">
-          <div class="text-gray-700 text-base">
-            <SolidMarkdown children={t("startGameDescription")} />
+        <div class="align-center mb-8 flex flex-col items-center justify-center gap-4 p-4">
+          <div class="text-base text-gray-700">
+            <SolidMarkdown children={t('startGameDescription')} />
           </div>
-          <div class="text-gray-500 text-sm">
-            <SolidMarkdown children={t("announcement")} />
+          <div class="text-sm text-gray-500">
+            <SolidMarkdown children={t('announcement')} />
           </div>
           <button
+            class="flex min-w-[120px] items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-75"
             disabled={isStarting()}
-            onClick={handleStartGame}
-            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
+            onClick={() => void handleStartGame()}
           >
-            <Show when={isStarting()} fallback={t("startGame")}>
-              <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>{t("llmGenerating")}</span>
+            <Show fallback={t('startGame')} when={isStarting()}>
+              <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <span>{t('llmGenerating')}</span>
             </Show>
           </button>
         </div>
       </Show>
 
       <Show when={gameState.isStarted}>
-        <div class="flex flex-col sm:w-auto align-center justify-center items-center mb-8 py-4">
+        <div class="align-center mb-8 flex flex-col items-center justify-center py-4 sm:w-auto">
           <div class="flex items-center justify-center gap-2">
             <ConfirmButton
-              children={isStarting() ? t("llmGenerating") : t("restartGame")}
-              onConfirm={() => handleStartGame()}
+              children={isStarting() ? t('llmGenerating') : t('restartGame')}
               disabled={isStarting()}
-            ></ConfirmButton>
-            <ConfirmButton children={t("showGeneratedAttributes")} onConfirm={() => setShowGeneratedAttributes(true)}></ConfirmButton>
+              onConfirm={() => void handleStartGame()}
+            />
+            <ConfirmButton
+              children={t('showGeneratedAttributes')}
+              onConfirm={() => setShowGeneratedAttributes(true)}
+            />
           </div>
-          <div class="flex-1 max-w-screen h-screen overflow-visible">
-            <InputBar onCreate={dispatchHandleCreate} disableButton={isStarting}></InputBar>
-            <MainList items={items} setItems={setItems} isStarting={isStarting} />
+          <div class="h-screen max-w-screen flex-1 overflow-visible">
+            <InputBar
+              disableButton={isStarting}
+              onCreate={dispatchHandleCreate}
+            />
+            <MainList
+              isStarting={isStarting}
+              items={items}
+              setItems={setItems}
+            />
           </div>
         </div>
       </Show>
 
-      <Modal isOpen={showGeneratedAttributes()} onClose={() => setShowGeneratedAttributes(false)} title={t("generatedAttributes")}>
+      <Modal
+        isOpen={showGeneratedAttributes()}
+        onClose={() => setShowGeneratedAttributes(false)}
+        title={t('generatedAttributes')}
+      >
         <ul>
           <li class="text-red-500">
             <strong>Attribute</strong>: {gameState.attributes?.attribute}

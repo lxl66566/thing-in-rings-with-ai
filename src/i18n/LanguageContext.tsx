@@ -1,34 +1,40 @@
-import { createContext, useContext, type ParentComponent } from "solid-js";
-import { createStore } from "solid-js/store";
-import { type Language, type TranslationKey, translations } from "./translations";
+import {
+  createContext,
+  createSignal,
+  useContext,
+  type Accessor,
+  type ParentComponent,
+} from 'solid-js';
 
-type LanguageContextType = {
-  language: Language;
+import {
+  type Language,
+  type TranslationKey,
+  translations,
+} from './translations';
+
+interface LanguageContextType {
+  language: Accessor<Language>;
   setLanguage: (lang: Language) => void;
   t: (key: TranslationKey) => string;
-};
+}
 
 const LanguageContext = createContext<LanguageContextType>();
 
-export const LanguageProvider: ParentComponent = (props) => {
-  const [state, setState] = createStore({
-    language: (localStorage.getItem("language") as Language) || "en",
-  });
+export const LanguageProvider: ParentComponent = props => {
+  const [language, setLanguage] = createSignal<Language>(
+    localStorage.getItem('language') === 'zh' ? 'zh' : 'en',
+  );
 
-  const setLanguage = (lang: Language) => {
-    setState({ language: lang });
-    localStorage.setItem("language", lang);
+  const changeLanguage = (lang: Language): void => {
+    setLanguage(lang);
+    localStorage.setItem('language', lang);
   };
 
-  const t = (key: TranslationKey) => translations[state.language][key];
+  const t = (key: TranslationKey): string => translations[language()][key];
 
   return (
     <LanguageContext.Provider
-      value={{
-        language: state.language,
-        setLanguage,
-        t,
-      }}
+      value={{ language, setLanguage: changeLanguage, t }}
     >
       {props.children}
     </LanguageContext.Provider>
@@ -38,7 +44,7 @@ export const LanguageProvider: ParentComponent = (props) => {
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
+    throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
 };

@@ -1,8 +1,9 @@
-import * as v from "valibot";
-import { generateObject } from "xsai";
-import { getConfig } from "./config";
-import { getGameState } from "./store/gameStore";
-import type { Language } from "./i18n/translations";
+import * as v from 'valibot';
+import { generateObject } from 'xsai';
+
+import { getConfig } from './config';
+import type { Language } from './i18n/translations';
+import { getGameState } from './store/gameStore';
 
 // 验证 LLM 返回的特征的 schema
 const attributesSchema = v.object({
@@ -36,7 +37,7 @@ export const GenerateGameAttributes = async (
   const config = getConfig();
 
   const prompt =
-    lang === "zh"
+    lang === 'zh'
       ? `你是游戏《Thing in Rings》的上帝，请你自由发挥，为游戏生成三个中文特征，用于**模糊地**描述名词的特征。好的特征应该减少歧义，并且不会出现一个特征囊括几乎所有常见名词的情况。下面虽然有给出一些例子，但请你不要局限于这些例子。
 word: 代表该名词英文单词的特征，可以从字母数量的范围、开头/结尾/中间的特定字母、音节数量与元音辅音数量或位置等等进行描述。例如“长度为 4-8 个字母”、“包含两个或更多不同的元音”、“以 A 到 M 之间的字母开头”等。该特征必须清晰，不可有任何歧义。
 attribute: 代表人类可能对该名词抱有的相对主观感觉，这里你可以自由地发挥，可以说得非常模糊，例如“大多数人家里都有”，“通常附近有其他东西”，“可以在商店购买”，“具有历史意义”等。
@@ -51,13 +52,13 @@ context: Represents the relatively objective properties the object might have. F
   const attributes = await generateObject({
     apiKey: config.apiKey,
     baseURL: config.baseURL,
-    model: config.model,
     messages: [
       {
-        role: "user",
         content: prompt,
+        role: 'user',
       },
     ],
+    model: config.model,
     schema: attributesSchema,
     temperature: 1.9,
   });
@@ -70,24 +71,24 @@ context: Represents the relatively objective properties the object might have. F
  */
 export const judgeItemPlacement = async (
   lang: Language,
-  item: { word: string; description?: string },
+  item: { description?: string; word: string },
 ): Promise<
+  | undefined
   | {
       correctJudgement?:
+        | undefined
         | {
             attribute: boolean;
             context: boolean;
             word: boolean;
-          }
-        | undefined;
+          };
       explanation: string;
     }
-  | undefined
 > => {
   const gameAttributes = getGameState().attributes;
   if (!gameAttributes) return;
   const prompt =
-    lang === "zh"
+    lang === 'zh'
       ? `假设你是一个生活在中国的一般人，正在一个游戏里当裁判。下面是游戏中预设好的三个特征：
 1. Attribute: ${gameAttributes.attribute}
 2. Context: ${gameAttributes.context}
@@ -109,17 +110,17 @@ You possess absolute rationality. Please:
   const result = await generateObject({
     apiKey: config.apiKey,
     baseURL: config.baseURL,
-    model: config.model,
     messages: [
       {
-        role: "system",
         content: prompt,
+        role: 'system',
       },
       {
-        role: "user",
-        content: `Item: "${item.word}"${item.description ? ` (${item.description})` : ""}`,
+        content: `Item: "${item.word}"${item.description ? ` (${item.description})` : ''}`,
+        role: 'user',
       },
     ],
+    model: config.model,
     schema: judgementSchema,
     temperature: 0.1,
   });

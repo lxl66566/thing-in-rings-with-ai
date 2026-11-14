@@ -1,5 +1,6 @@
-import { createStore } from "solid-js/store";
-import type { AreaAttributes, GameState } from "../types/game";
+import { createStore } from 'solid-js/store';
+
+import type { AreaAttributes, GameState } from '../types/game';
 
 const initialState: GameState = {
   isStarted: false,
@@ -20,5 +21,5 @@ export const resetGame = (): void => {
 };
 
 export const startGame = (attr: AreaAttributes): void => {
-  setGameState({ isStarted: true, attributes: attr });
+  setGameState({ attributes: attr, isStarted: true });
 };
