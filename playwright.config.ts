@@ -22,10 +22,19 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
   },
-  webServer: {
-    command: 'pnpm dev -- --port 3000 --strictPort',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    url: baseURL,
-  },
+  webServer: [
+    {
+      command: 'pnpm dev -- --port 3000 --strictPort',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+      url: baseURL,
+    },
+    {
+      // Multiplayer websocket server; vite proxies /ws to it.
+      command: 'node server/index.ts --port 8787',
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+      url: 'http://localhost:8787/healthz',
+    },
+  ],
 });
