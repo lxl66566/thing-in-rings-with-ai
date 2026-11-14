@@ -8,11 +8,12 @@ import { GenerateGameAttributes, judgeItemPlacement } from '../llm';
 import { getGameState, resetGame, startGame } from '../store/gameStore';
 import type { TableItem, VennArea } from '../types/game';
 import { ConfirmButton } from './common/ConfirmButton';
-import { Modal } from './common/Modal';
+import { GeneratedAttributesModal } from './GeneratedAttributesModal';
 import InputBar from './InputBar';
 import { MainList } from './MainList';
 
 interface GameProps {
+  onEnterMultiplayer: () => void;
   openConfigModal: () => void;
 }
 
@@ -25,28 +26,6 @@ export const Game: Component<GameProps> = props => {
 
   const [items, setItems] = createSignal<TableItem[]>([]); // 存储表格数据的数组信号
 
-  // fake data
-  // const l = [];
-  // for (let i = 0; i < 20; i++) {
-  //   l.push({
-  //     id: i,
-  //     name: " 123",
-  //     description: " 456",
-  //     userInput: {
-  //       word: false,
-  //       attribute: false,
-  //       context: false,
-  //     },
-  //     actualResult: {
-  //       word: false,
-  //       attribute: false,
-  //       context: false,
-  //     },
-  //     explanation: "123",
-  //   });
-  // }
-  // setItems(l);
-
   const handleStartGame = async () => {
     if (!isConfigValid(getConfig())) {
       props.openConfigModal();
@@ -55,10 +34,16 @@ export const Game: Component<GameProps> = props => {
     resetGame();
     setItems([]);
     setIsStarting(true);
-    const attr = await GenerateGameAttributes(language());
-    startGame(attr);
-    setIsStarting(false);
-    toast.success(t('gameStarted'));
+    try {
+      const attr = await GenerateGameAttributes(language());
+      startGame(attr);
+      toast.success(t('gameStarted'));
+    } catch (error) {
+      console.error('Error starting the game:', error);
+      toast.error(t('startFailed'));
+    } finally {
+      setIsStarting(false);
+    }
   };
 
   // 处理"创建"按钮点击事件的异步函数
@@ -68,6 +53,8 @@ export const Game: Component<GameProps> = props => {
     area: VennArea,
     callback: () => void,
   ) => {
+    const attributes = gameState.attributes;
+    if (!attributes) return;
     const userInputItem = {
       description: description,
       word: name,
@@ -77,6 +64,7 @@ export const Game: Component<GameProps> = props => {
       const judgementResult = await judgeItemPlacement(
         language(),
         userInputItem,
+        attributes,
       );
       const actualResult = judgementResult?.correctJudgement;
 
@@ -111,6 +99,14 @@ export const Game: Component<GameProps> = props => {
     void handleCreate(name, description, area, callback);
   };
 
+  const updateItemColor = (itemId: number, newColor: string) => {
+    setItems(prev =>
+      prev.map(item =>
+        item.id === itemId ? { ...item, color: newColor } : item,
+      ),
+    );
+  };
+
   return (
     <div class="flex flex-1 flex-col overflow-visible bg-white shadow-lg">
       <Show when={!gameState.isStarted}>
@@ -130,6 +126,14 @@ export const Game: Component<GameProps> = props => {
               <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               <span>{t('llmGenerating')}</span>
             </Show>
+          </button>
+          <button
+            class="rounded-md bg-white px-4 py-2 text-indigo-600 shadow transition-colors hover:bg-gray-50 sm:py-2"
+            onClick={() => {
+              props.onEnterMultiplayer();
+            }}
+          >
+            {t('multiplayer')}
           </button>
         </div>
       </Show>
@@ -152,32 +156,16 @@ export const Game: Component<GameProps> = props => {
               disableButton={isStarting}
               onCreate={dispatchHandleCreate}
             />
-            <MainList
-              isStarting={isStarting}
-              items={items}
-              setItems={setItems}
-            />
+            <MainList items={items} onItemColorChange={updateItemColor} />
           </div>
         </div>
       </Show>
 
-      <Modal
+      <GeneratedAttributesModal
+        attributes={gameState.attributes}
         isOpen={showGeneratedAttributes()}
         onClose={() => setShowGeneratedAttributes(false)}
-        title={t('generatedAttributes')}
-      >
-        <ul>
-          <li class="text-red-500">
-            <strong>Attribute</strong>: {gameState.attributes?.attribute}
-          </li>
-          <li class="text-blue-500">
-            <strong>Context</strong>: {gameState.attributes?.context}
-          </li>
-          <li class="text-yellow-500">
-            <strong>Word</strong>: {gameState.attributes?.word}
-          </li>
-        </ul>
-      </Modal>
+      />
     </div>
   );
 };

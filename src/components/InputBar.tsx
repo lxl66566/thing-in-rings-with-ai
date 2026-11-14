@@ -23,6 +23,10 @@ const InputBar: Component<InputBarProps> = props => {
   const [context, setContext] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false); // 用于表示加载状态
 
+  // 单机模式下生成中 / 联机模式下未轮到时禁用整个输入区
+  const disabled = () =>
+    isLoading() || (props.disableButton ? props.disableButton() : false);
+
   const resetUserInput = () => {
     // 可选：创建成功后清空输入框
     setName('');
@@ -38,6 +42,7 @@ const InputBar: Component<InputBarProps> = props => {
       <div class="w-full sm:w-auto">
         <input
           class="w-full rounded-md border border-gray-300 p-2.5 text-base focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:w-36"
+          disabled={disabled()}
           id="name"
           onInput={e => setName(e.currentTarget.value)}
           placeholder={t('word')}
@@ -50,6 +55,7 @@ const InputBar: Component<InputBarProps> = props => {
       <div class="w-full sm:flex-1">
         <input
           class="w-full rounded-md border border-gray-300 p-2.5 text-base focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:min-w-25"
+          disabled={disabled()}
           id="description"
           onInput={e => setDescription(e.currentTarget.value)}
           placeholder={t('description')}
@@ -65,6 +71,7 @@ const InputBar: Component<InputBarProps> = props => {
           <input
             checked={word()}
             class="h-5 w-5 accent-blue-600"
+            disabled={disabled()}
             onChange={e => setWord(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -76,6 +83,7 @@ const InputBar: Component<InputBarProps> = props => {
           <input
             checked={attribute()}
             class="h-5 w-5 accent-blue-600"
+            disabled={disabled()}
             onChange={e => setAttribute(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -87,6 +95,7 @@ const InputBar: Component<InputBarProps> = props => {
           <input
             checked={context()}
             class="h-5 w-5 accent-blue-600"
+            disabled={disabled()}
             onChange={e => setContext(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -97,9 +106,7 @@ const InputBar: Component<InputBarProps> = props => {
       {/* 创建按钮 */}
       <button
         class="w-full rounded-md bg-blue-600 px-6 py-2.5 font-semibold text-white shadow transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2"
-        disabled={
-          isLoading() || (props.disableButton ? props.disableButton() : false)
-        }
+        disabled={disabled()}
         onClick={() => {
           if (!name()) {
             toast.error(t('noNameSelected'));

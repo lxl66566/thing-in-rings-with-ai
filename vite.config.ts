@@ -15,6 +15,10 @@ const config: UserConfig = defineConfig({
   plugins: [UnoCSS(), solidPlugin()],
   server: {
     port: 3000,
+    proxy: {
+      // Multiplayer websocket handled by the node server (see server/index.ts).
+      '/ws': { target: 'ws://localhost:8787', ws: true },
+    },
   },
   test: {
     environment: 'node',

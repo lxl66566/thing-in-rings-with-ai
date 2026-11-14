@@ -29,5 +29,6 @@
     "noUncheckedSideEffectImports": true, // Side-effect imports must resolve
     "useUnknownInCatchVariables": true, // Catch clause variables are unknown
     "verbatimModuleSyntax": true // Strict module syntax (type-only imports must use `type`)
-  }
+  },
+  "exclude": ["dist", "server"]
 }

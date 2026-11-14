@@ -1,16 +1,22 @@
-import { type Component, createSignal } from 'solid-js';
+import { type Component, createSignal, Show } from 'solid-js';
 import toast from 'solid-toast';
 
 import { Modal } from './components/common/Modal';
 import { ConfigPanel } from './components/ConfigPanel';
 import { Game } from './components/Game';
 import { useLanguage } from './i18n/LanguageContext';
-// import { FiSettings } from "solid-icons/fi";
-// import { IoLanguage } from "solid-icons/io";
+import { OnlineFlow } from './online/OnlineFlow';
+import { hasStoredSession, leaveOnline } from './store/onlineStore';
+
+type AppMode = 'online' | 'single';
 
 const App: Component = () => {
-  const [isConfigModalOpen, setIsConfigModalOpen] = createSignal(false);
+  // A stored online session (page refresh) reopens the online mode.
+  const [mode, setMode] = createSignal<AppMode>(
+    hasStoredSession() ? 'online' : 'single',
+  );
   const { language, setLanguage, t } = useLanguage();
+  const [isConfigModalOpen, setIsConfigModalOpen] = createSignal(false);
   const [loadingId, setLoadingId] = createSignal<string | undefined>(undefined);
 
   const openConfigModal = () => {
@@ -27,7 +33,6 @@ const App: Component = () => {
           class="flex items-center rounded-lg bg-white px-4 py-2.5 shadow transition-colors hover:bg-gray-50 sm:py-2"
           onClick={() => setIsConfigModalOpen(true)}
         >
-          {/* <FiSettings /> */}
           {t('settings')}
         </button>
         <select
@@ -37,13 +42,30 @@ const App: Component = () => {
           }}
           value={language()}
         >
-          {/* <IoLanguage /> */}
           <option value="en">English</option>
           <option value="zh">中文</option>
         </select>
       </div>
 
-      <Game openConfigModal={openConfigModal} />
+      <Show
+        fallback={
+          <Game
+            onEnterMultiplayer={() => {
+              setMode('online');
+            }}
+            openConfigModal={openConfigModal}
+          />
+        }
+        when={mode() === 'online'}
+      >
+        <OnlineFlow
+          onBack={() => {
+            leaveOnline();
+            setMode('single');
+          }}
+          openConfigModal={openConfigModal}
+        />
+      </Show>
 
       {/* 配置 Modal */}
       <Modal

@@ -1,6 +1,8 @@
 import { type Component, createSignal, Show, For } from 'solid-js';
 import { Portal } from 'solid-js/web';
 
+import { PLAYER_COLORS } from '../../../shared/colors';
+
 interface ColorPickerProps {
   onColorSelect: (color: string) => void;
   selectedColor: string;
@@ -14,21 +16,8 @@ export const ColorPicker: Component<ColorPickerProps> = props => {
   const [isOpen, setIsOpen] = createSignal(false);
   const [position, setPosition] = createSignal({ x: 0, y: 0 });
 
-  // 预定义的颜色选项
-  const colors = [
-    '#FF0000',
-    '#FF7F00',
-    '#FFFF00',
-    '#00FF00',
-    '#00FFFF',
-    '#0000FF',
-    '#8B00FF',
-    '#FF69B4',
-    '#000000',
-    '#808080',
-    '#FFFFFF',
-    '#8B4513',
-  ];
+  // 预定义的颜色选项（与联机昵称共用一套色板）
+  const colors = PLAYER_COLORS;
 
   // 处理按钮点击，显示颜色选择面板（位置夹取到视口内，避免移动端贴边时面板超出屏幕）
   const handleClick = (e: MouseEvent) => {

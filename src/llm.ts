@@ -3,7 +3,7 @@ import * as v from 'valibot';
 
 import { type ProviderId, getConfig } from './config';
 import type { Language } from './i18n/translations';
-import { getGameState } from './store/gameStore';
+import type { AreaAttributes } from './types/game';
 
 // 验证 LLM 返回的特征的 schema
 const attributesSchema = v.object({
@@ -141,6 +141,7 @@ context: Represents the relatively objective properties the object might have. F
 export const judgeItemPlacement = async (
   lang: Language,
   item: { description?: string; word: string },
+  gameAttributes: AreaAttributes,
 ): Promise<
   | undefined
   | {
@@ -154,8 +155,6 @@ export const judgeItemPlacement = async (
       explanation: string;
     }
 > => {
-  const gameAttributes = getGameState().attributes;
-  if (!gameAttributes) return;
   const prompt =
     lang === 'zh'
       ? `假设你是一个生活在中国的一般人，正在一个游戏里当裁判。下面是游戏中预设好的三个特征：

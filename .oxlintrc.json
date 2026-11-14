@@ -25,6 +25,7 @@
   },
   "env": {
     "browser": true,
+    "node": true,
     "es2024": true
   },
   "ignorePatterns": ["dist/**", "node_modules/**", "coverage/**"]

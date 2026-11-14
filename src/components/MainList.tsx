@@ -1,4 +1,4 @@
-import { For, type Component, type Setter, type Accessor } from 'solid-js';
+import { For, type Accessor, type Component } from 'solid-js';
 
 import { useLanguage } from '../i18n/LanguageContext';
 import type { TableItem } from '../types/game';
@@ -9,21 +9,12 @@ const toEmoji = (value: boolean) => {
 };
 
 interface MainListProps {
-  isStarting: Accessor<boolean>;
   items: Accessor<TableItem[]>;
-  setItems: Setter<TableItem[]>;
+  onItemColorChange: (itemId: number, color: string) => void;
 }
 
 const MainList: Component<MainListProps> = props => {
   const { t } = useLanguage();
-
-  const updateItemColor = (itemId: number, newColor: string) => {
-    props.setItems(prev =>
-      prev.map(item =>
-        item.id === itemId ? { ...item, color: newColor } : item,
-      ),
-    );
-  };
 
   return (
     <div class="flex flex-col gap-4 p-4 sm:p-6">
@@ -77,65 +68,82 @@ const MainList: Component<MainListProps> = props => {
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <For each={props.items()}>
-              {item => (
-                <tr>
-                  <td class="flex items-center px-2 py-2 text-sm whitespace-nowrap text-gray-800 sm:px-6 sm:py-4">
-                    <div class="flex flex-nowrap items-center gap-0.5">
-                      <span class="flex-shrink-0 pr-2">{item.name}</span>
-                      <ColorPicker
-                        onColorSelect={color => {
-                          updateItemColor(item.id, color);
-                        }}
-                        selectedColor={item.color ?? '#FFFFFF'}
-                      />
-                    </div>
-                  </td>
-                  <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
-                    {item.description}
-                  </td>
-                  <td
-                    class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
-                    classList={{
-                      'bg-green-100 text-green-800':
-                        item.userInput.word === item.actualResult.word,
-                      'bg-red-100 text-red-800':
-                        item.userInput.word !== item.actualResult.word,
-                    }}
-                  >
-                    {toEmoji(item.actualResult.word)}
-                  </td>
-                  <td
-                    class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
-                    classList={{
-                      'bg-green-100 text-green-800':
-                        item.userInput.attribute ===
-                        item.actualResult.attribute,
-                      'bg-red-100 text-red-800':
-                        item.userInput.attribute !==
-                        item.actualResult.attribute,
-                    }}
-                  >
-                    {toEmoji(item.actualResult.attribute)}
-                  </td>
-                  <td
-                    class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
-                    classList={{
-                      'bg-green-100 text-green-800':
-                        item.userInput.context === item.actualResult.context,
-                      'bg-red-100 text-red-800':
-                        item.userInput.context !== item.actualResult.context,
-                    }}
-                  >
-                    {toEmoji(item.actualResult.context)}
-                  </td>
-                  <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
-                    <details>
-                      <summary>{t('expandExplanation')}</summary>
-                      {item.explanation}
-                    </details>
-                  </td>
-                </tr>
-              )}
+              {item => {
+                const resolved = item.actualResult !== undefined;
+                return (
+                  <tr>
+                    <td class="flex items-center px-2 py-2 text-sm whitespace-nowrap text-gray-800 sm:px-6 sm:py-4">
+                      <div class="flex flex-nowrap items-center gap-0.5">
+                        <span class="flex-shrink-0 pr-2">{item.name}</span>
+                        <ColorPicker
+                          onColorSelect={color => {
+                            props.onItemColorChange(item.id, color);
+                          }}
+                          selectedColor={item.color ?? '#FFFFFF'}
+                        />
+                      </div>
+                    </td>
+                    <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
+                      {item.description}
+                    </td>
+                    <td
+                      class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
+                      classList={{
+                        'bg-green-100 text-green-800':
+                          resolved &&
+                          item.userInput.word === item.actualResult?.word,
+                        'bg-red-100 text-red-800':
+                          resolved &&
+                          item.userInput.word !== item.actualResult?.word,
+                      }}
+                    >
+                      {resolved
+                        ? toEmoji(item.actualResult?.word ?? false)
+                        : '⏳'}
+                    </td>
+                    <td
+                      class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
+                      classList={{
+                        'bg-green-100 text-green-800':
+                          resolved &&
+                          item.userInput.attribute ===
+                            item.actualResult?.attribute,
+                        'bg-red-100 text-red-800':
+                          resolved &&
+                          item.userInput.attribute !==
+                            item.actualResult?.attribute,
+                      }}
+                    >
+                      {resolved
+                        ? toEmoji(item.actualResult?.attribute ?? false)
+                        : '⏳'}
+                    </td>
+                    <td
+                      class="px-2 py-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4"
+                      classList={{
+                        'bg-green-100 text-green-800':
+                          resolved &&
+                          item.userInput.context === item.actualResult?.context,
+                        'bg-red-100 text-red-800':
+                          resolved &&
+                          item.userInput.context !== item.actualResult?.context,
+                      }}
+                    >
+                      {resolved
+                        ? toEmoji(item.actualResult?.context ?? false)
+                        : '⏳'}
+                    </td>
+                    <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
+                      <details>
+                        <summary>
+                          {resolved ? t('expandExplanation') : t('judging')}
+                        </summary>
+                        {item.explanation || t('noExplanation')}
+                      </details>
+                    </td>
+                  </tr>
+                );
+              }}
             </For>
           </tbody>
         </table>
