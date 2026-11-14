@@ -26,9 +26,9 @@ const MainList: Component<MainListProps> = props => {
   };
 
   return (
-    <div class="h-full min-h-screen overflow-visible p-6">
+    <div class="flex flex-col gap-4 p-4 sm:p-6">
       {/* 表格区域 */}
-      <div class="mb-4 flex items-center gap-2">
+      <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
         <h2 class="text-xl font-bold text-gray-800">{t('ItemsList')}</h2>
         <span class="text-sm text-gray-600">{t('ItemsListDescription')}</span>
       </div>
@@ -90,7 +90,7 @@ const MainList: Component<MainListProps> = props => {
                       />
                     </div>
                   </td>
-                  <td class="px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:px-6 sm:py-4">
+                  <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
                     {item.description}
                   </td>
                   <td
@@ -128,7 +128,7 @@ const MainList: Component<MainListProps> = props => {
                   >
                     {toEmoji(item.actualResult.context)}
                   </td>
-                  <td class="px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:px-6 sm:py-4">
+                  <td class="max-w-40 px-2 py-2 text-sm break-words whitespace-normal text-gray-800 sm:max-w-none sm:px-6 sm:py-4">
                     <details>
                       <summary>{t('expandExplanation')}</summary>
                       {item.explanation}

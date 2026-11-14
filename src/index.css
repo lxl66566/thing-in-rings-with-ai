@@ -1,3 +1,12 @@
+:root {
+  /* Shared page-level colors. */
+  --page-bg: #f1f5f9;
+}
+
+html {
+  background-color: var(--page-bg);
+}
+
 body {
   margin: 0;
   font-family:
@@ -24,4 +33,12 @@ a:hover {
 
 button {
   cursor: pointer;
+}
+
+/* Treat taps on controls as clicks: kills the double-tap zoom delay on mobile. */
+button,
+input,
+label,
+select {
+  touch-action: manipulation;
 }

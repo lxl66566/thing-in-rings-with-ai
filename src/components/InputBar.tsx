@@ -33,11 +33,11 @@ const InputBar: Component<InputBarProps> = props => {
   };
 
   return (
-    <div class="sticky top-5 z-10 mb-8 flex w-auto flex-row flex-wrap items-start space-y-4 rounded-lg bg-white p-4 shadow sm:items-center sm:space-y-0 sm:space-x-6 sm:p-6 md:flex-nowrap">
+    <div class="sticky top-2 z-10 flex flex-col gap-3 rounded-lg bg-white p-4 shadow sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-3 sm:p-6">
       {/* Name 输入框 */}
-      <div class="w-[calc(100%-2rem)] sm:w-auto">
+      <div class="w-full sm:w-auto">
         <input
-          class="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:min-w-25"
+          class="w-full rounded-md border border-gray-300 p-2.5 text-base focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:w-36"
           id="name"
           onInput={e => setName(e.currentTarget.value)}
           placeholder={t('word')}
@@ -47,9 +47,9 @@ const InputBar: Component<InputBarProps> = props => {
       </div>
 
       {/* Description 输入框 */}
-      <div class="w-[calc(100%-2rem)] sm:w-auto sm:flex-1">
+      <div class="w-full sm:flex-1">
         <input
-          class="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:min-w-25"
+          class="w-full rounded-md border border-gray-300 p-2.5 text-base focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:min-w-25"
           id="description"
           onInput={e => setDescription(e.currentTarget.value)}
           placeholder={t('description')}
@@ -59,12 +59,12 @@ const InputBar: Component<InputBarProps> = props => {
       </div>
 
       {/* Checkboxes 容器 */}
-      <div class="flex w-auto flex-row flex-nowrap items-center gap-3 pt-2">
+      <div class="flex flex-nowrap items-center gap-3">
         {/* Word Checkbox */}
-        <label class="flex cursor-pointer items-center text-gray-700">
+        <label class="flex cursor-pointer items-center py-1 text-gray-700">
           <input
             checked={word()}
-            class="form-checkbox h-5 w-5 rounded text-blue-600 focus:ring-blue-500"
+            class="h-5 w-5 accent-blue-600"
             onChange={e => setWord(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -72,10 +72,10 @@ const InputBar: Component<InputBarProps> = props => {
         </label>
 
         {/* Attribute Checkbox */}
-        <label class="flex cursor-pointer items-center text-gray-700">
+        <label class="flex cursor-pointer items-center py-1 text-gray-700">
           <input
             checked={attribute()}
-            class="form-checkbox h-5 w-5 rounded text-blue-600 focus:ring-blue-500"
+            class="h-5 w-5 accent-blue-600"
             onChange={e => setAttribute(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -83,10 +83,10 @@ const InputBar: Component<InputBarProps> = props => {
         </label>
 
         {/* Context Checkbox */}
-        <label class="flex cursor-pointer items-center text-gray-700">
+        <label class="flex cursor-pointer items-center py-1 text-gray-700">
           <input
             checked={context()}
-            class="form-checkbox h-5 w-5 rounded text-blue-600 focus:ring-blue-500"
+            class="h-5 w-5 accent-blue-600"
             onChange={e => setContext(e.currentTarget.checked)}
             type="checkbox"
           />
@@ -96,7 +96,7 @@ const InputBar: Component<InputBarProps> = props => {
 
       {/* 创建按钮 */}
       <button
-        class="focus:ring-opacity-50 w-[calc(100%-2rem)] min-w-10 rounded-md bg-blue-600 px-6 py-2 font-semibold text-white shadow hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        class="w-full rounded-md bg-blue-600 px-6 py-2.5 font-semibold text-white shadow transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2"
         disabled={
           isLoading() || (props.disableButton ? props.disableButton() : false)
         }

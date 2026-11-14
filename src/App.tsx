@@ -20,29 +20,27 @@ const App: Component = () => {
   };
 
   return (
-    <div class="m-2 flex min-h-screen flex-col pb-2">
+    <div class="flex min-h-dvh flex-col p-2">
       {/* 顶部工具栏 */}
-      <div class="top-4 right-4 z-40 flex flex-none justify-end">
-        <div class="flex items-center">
-          <button
-            class="flex items-center rounded-lg bg-white px-4 py-2 shadow transition-colors hover:bg-gray-50"
-            onClick={() => setIsConfigModalOpen(true)}
-          >
-            {/* <FiSettings /> */}
-            {t('settings')}
-          </button>
-          <select
-            class="ml-4 rounded-md border border-gray-300 px-3 py-2 shadow-sm"
-            onChange={e => {
-              setLanguage(e.currentTarget.value === 'zh' ? 'zh' : 'en');
-            }}
-            value={language()}
-          >
-            {/* <IoLanguage /> */}
-            <option value="en">English</option>
-            <option value="zh">中文</option>
-          </select>
-        </div>
+      <div class="flex flex-none items-center justify-end gap-3">
+        <button
+          class="flex items-center rounded-lg bg-white px-4 py-2.5 shadow transition-colors hover:bg-gray-50 sm:py-2"
+          onClick={() => setIsConfigModalOpen(true)}
+        >
+          {/* <FiSettings /> */}
+          {t('settings')}
+        </button>
+        <select
+          class="rounded-md border border-gray-300 bg-white px-3 py-2.5 shadow-sm sm:py-2"
+          onChange={e => {
+            setLanguage(e.currentTarget.value === 'zh' ? 'zh' : 'en');
+          }}
+          value={language()}
+        >
+          {/* <IoLanguage /> */}
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
       </div>
 
       <Game openConfigModal={openConfigModal} />

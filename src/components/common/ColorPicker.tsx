@@ -30,11 +30,16 @@ export const ColorPicker: Component<ColorPickerProps> = props => {
     '#8B4513',
   ];
 
-  // 处理按钮点击，显示颜色选择面板
+  // 处理按钮点击，显示颜色选择面板（位置夹取到视口内，避免移动端贴边时面板超出屏幕）
   const handleClick = (e: MouseEvent) => {
+    const halfPanel = 64;
+    const panelHeight = 120;
     setPosition({
-      x: e.clientX,
-      y: e.clientY,
+      x: Math.min(
+        Math.max(e.clientX, halfPanel),
+        window.innerWidth - halfPanel,
+      ),
+      y: Math.max(e.clientY, panelHeight),
     });
     setIsOpen(!isOpen());
   };

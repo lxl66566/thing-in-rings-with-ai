@@ -10,18 +10,17 @@ interface ModalProps {
 export const Modal: Component<ModalProps> = props => {
   return (
     <div
-      class={`fixed inset-0 z-50 ${props.isOpen ? 'block' : 'hidden'}`}
+      class={`fixed inset-0 z-50 overflow-y-auto ${props.isOpen ? 'block' : 'hidden'}`}
       onClick={() => {
         props.onClose();
       }}
     >
-      {/* 背景遮罩 */}
-      <div class="absolute inset-0 bg-black opacity-50" />
+      {/* Modal 内容（遮罩放在内部，保证随内容滚动时始终覆盖全屏） */}
+      <div class="relative flex min-h-full items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black opacity-50" />
 
-      {/* Modal 内容 */}
-      <div class="relative flex min-h-screen items-center justify-center p-4">
         <div
-          class="w-full max-w-md rounded-lg bg-white shadow-xl"
+          class="relative w-full max-w-md rounded-lg bg-white shadow-xl"
           onClick={e => {
             e.stopPropagation();
           }}
@@ -30,7 +29,7 @@ export const Modal: Component<ModalProps> = props => {
           <div class="flex items-center justify-between border-b p-4">
             <h3 class="text-xl font-semibold">{props.title}</h3>
             <button
-              class="text-gray-400 transition-colors hover:text-gray-600"
+              class="p-1 text-gray-400 transition-colors hover:text-gray-600"
               onClick={() => {
                 props.onClose();
               }}

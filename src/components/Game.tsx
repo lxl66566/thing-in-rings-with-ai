@@ -112,9 +112,9 @@ export const Game: Component<GameProps> = props => {
   };
 
   return (
-    <div class="flex min-h-screen flex-1 flex-col justify-center overflow-visible bg-white shadow-lg">
+    <div class="flex flex-1 flex-col overflow-visible bg-white shadow-lg">
       <Show when={!gameState.isStarted}>
-        <div class="align-center mb-8 flex flex-col items-center justify-center gap-4 p-4">
+        <div class="my-auto flex flex-col items-center justify-center gap-4 p-4 sm:py-8">
           <div class="text-base text-gray-700">
             <SolidMarkdown children={t('startGameDescription')} />
           </div>
@@ -122,7 +122,7 @@ export const Game: Component<GameProps> = props => {
             <SolidMarkdown children={t('announcement')} />
           </div>
           <button
-            class="flex min-w-[120px] items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-75"
+            class="flex min-w-30 items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2.5 text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-75 sm:py-2"
             disabled={isStarting()}
             onClick={() => void handleStartGame()}
           >
@@ -135,8 +135,8 @@ export const Game: Component<GameProps> = props => {
       </Show>
 
       <Show when={gameState.isStarted}>
-        <div class="align-center mb-8 flex flex-col items-center justify-center py-4 sm:w-auto">
-          <div class="flex items-center justify-center gap-2">
+        <div class="flex flex-1 flex-col gap-4 py-2 sm:py-4">
+          <div class="flex flex-wrap items-center justify-center gap-2">
             <ConfirmButton
               children={isStarting() ? t('llmGenerating') : t('restartGame')}
               disabled={isStarting()}
@@ -147,7 +147,7 @@ export const Game: Component<GameProps> = props => {
               onConfirm={() => setShowGeneratedAttributes(true)}
             />
           </div>
-          <div class="h-screen max-w-screen flex-1 overflow-visible">
+          <div class="min-w-0 flex-1">
             <InputBar
               disableButton={isStarting}
               onCreate={dispatchHandleCreate}
